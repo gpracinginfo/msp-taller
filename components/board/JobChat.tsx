@@ -72,7 +72,7 @@ export function JobChat({
 
   return (
     <>
-      <div className="mt-4 rounded-2xl border bg-slate-50 p-3">
+      <div className="rounded-2xl border bg-slate-50 p-3">
         <div className="mb-2 flex items-center justify-between">
           <h4 className="flex items-center gap-2 text-sm font-black text-slate-700">
             <MessageSquare className="h-4 w-4" />
@@ -87,7 +87,7 @@ export function JobChat({
           </button>
         </div>
 
-        <div className="mb-3 space-y-1.5">
+        <div className="mb-3 max-h-28 overflow-y-auto space-y-1.5 pr-1">
           {loading ? (
             <p className="py-1 text-xs text-gray-400">Cargando...</p>
           ) : messages.length === 0 ? (

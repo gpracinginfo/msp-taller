@@ -474,6 +474,7 @@ export function JobModal({
               )}
             </div>
 
+            {/* Fila 1: Trabajo visible | Piezas | Notas */}
             <div className="mt-3 grid gap-2 lg:grid-cols-3">
               <WorkDescriptionField
                 value={draft.work_description}
@@ -500,49 +501,58 @@ export function JobModal({
               />
             </div>
 
-            <JobChat
-              jobId={job.id}
-              plate={draft.plate}
-              onMessageSent={() => onChatMessageSent?.(job.id)}
-            />
-
-            <div className="mt-3 flex flex-col items-end gap-2">
-              <div className="flex items-center gap-3">
-                {draft.fane && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src="/fane-stamp.webp" alt="FANE" className="w-24 opacity-90" />
-                )}
-
-                <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition ${draft.fane ? 'border-orange-400 bg-orange-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
-                  <input
-                    type="checkbox"
-                    checked={draft.fane}
-                    onChange={(event) => updateDraft('fane', event.target.checked)}
-                    className="h-4 w-4 accent-orange-500"
-                  />
-                  <span className={`text-xs font-black ${draft.fane ? 'text-orange-800' : 'text-gray-600'}`}>
-                    FANE
-                  </span>
-                </label>
+            {/* Fila 2: Acciones rápidas | Chat | FANE/DAVID */}
+            <div className="mt-3 grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)_140px]">
+              <div>
+                <p className="mb-1.5 text-xs font-black text-gray-600">Acciones rápidas</p>
+                <WorkPresets
+                  value={draft.work_description}
+                  onChange={(value) => updateDraft('work_description', value)}
+                />
               </div>
 
-              <div className="flex items-center gap-3">
-                {draft.david && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src="/david-stamp.webp" alt="DAVID" className="w-24 opacity-90" />
-                )}
+              <JobChat
+                jobId={job.id}
+                plate={draft.plate}
+                onMessageSent={() => onChatMessageSent?.(job.id)}
+              />
 
-                <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition ${draft.david ? 'border-fuchsia-400 bg-fuchsia-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
-                  <input
-                    type="checkbox"
-                    checked={draft.david}
-                    onChange={(event) => updateDraft('david', event.target.checked)}
-                    className="h-4 w-4 accent-fuchsia-600"
-                  />
-                  <span className={`text-xs font-black ${draft.david ? 'text-fuchsia-800' : 'text-gray-600'}`}>
-                    DAVID
-                  </span>
-                </label>
+              <div className="flex flex-col gap-3 pt-1">
+                <div className="flex flex-col items-start gap-1">
+                  {draft.fane && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src="/fane-stamp.webp" alt="FANE" className="w-20 opacity-90" />
+                  )}
+                  <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition ${draft.fane ? 'border-orange-400 bg-orange-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
+                    <input
+                      type="checkbox"
+                      checked={draft.fane}
+                      onChange={(event) => updateDraft('fane', event.target.checked)}
+                      className="h-4 w-4 accent-orange-500"
+                    />
+                    <span className={`text-xs font-black ${draft.fane ? 'text-orange-800' : 'text-gray-600'}`}>
+                      FANE
+                    </span>
+                  </label>
+                </div>
+
+                <div className="flex flex-col items-start gap-1">
+                  {draft.david && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src="/david-stamp.webp" alt="DAVID" className="w-20 opacity-90" />
+                  )}
+                  <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition ${draft.david ? 'border-fuchsia-400 bg-fuchsia-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
+                    <input
+                      type="checkbox"
+                      checked={draft.david}
+                      onChange={(event) => updateDraft('david', event.target.checked)}
+                      className="h-4 w-4 accent-fuchsia-600"
+                    />
+                    <span className={`text-xs font-black ${draft.david ? 'text-fuchsia-800' : 'text-gray-600'}`}>
+                      DAVID
+                    </span>
+                  </label>
+                </div>
               </div>
             </div>
           </div>
@@ -746,19 +756,6 @@ function WorkDescriptionField({
   value: string;
   onChange: (value: string) => void;
 }) {
-  const lines = normalizeWorkLines(value);
-
-  function togglePreset(preset: string, checked: boolean) {
-    const currentLines = normalizeWorkLines(value);
-    const withoutPreset = currentLines.filter((line) => line !== preset);
-
-    const nextLines = checked
-      ? [...withoutPreset, preset]
-      : withoutPreset;
-
-    onChange(nextLines.join('\n'));
-  }
-
   return (
     <div className="block">
       <span className="text-xs font-black text-gray-600">
@@ -776,34 +773,57 @@ function WorkDescriptionField({
         placeholder="Escribe el trabajo o marca una opción rápida..."
         className="mt-1 w-full resize-none rounded-xl border px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
       />
+    </div>
+  );
+}
 
-      <div className="mt-2 flex flex-col gap-1.5">
-        {WORK_PRESET_ROWS.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex flex-wrap gap-2">
-            {row.map((preset) => {
-              const checked = lines.includes(preset);
-              return (
-                <label
-                  key={preset}
-                  className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-xs font-black ${
-                    checked
-                      ? 'border-blue-300 bg-blue-50 text-blue-800'
-                      : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={(event) => togglePreset(preset, event.target.checked)}
-                    className="h-4 w-4"
-                  />
-                  {preset}
-                </label>
-              );
-            })}
-          </div>
-        ))}
-      </div>
+function WorkPresets({
+  value,
+  onChange
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  const lines = normalizeWorkLines(value);
+
+  function togglePreset(preset: string, checked: boolean) {
+    const currentLines = normalizeWorkLines(value);
+    const withoutPreset = currentLines.filter((line) => line !== preset);
+
+    const nextLines = checked
+      ? [...withoutPreset, preset]
+      : withoutPreset;
+
+    onChange(nextLines.join('\n'));
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      {WORK_PRESET_ROWS.map((row, rowIndex) => (
+        <div key={rowIndex} className="flex flex-wrap gap-2">
+          {row.map((preset) => {
+            const checked = lines.includes(preset);
+            return (
+              <label
+                key={preset}
+                className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-xs font-black ${
+                  checked
+                    ? 'border-blue-300 bg-blue-50 text-blue-800'
+                    : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  checked={checked}
+                  onChange={(event) => togglePreset(preset, event.target.checked)}
+                  className="h-4 w-4"
+                />
+                {preset}
+              </label>
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 }
