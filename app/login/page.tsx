@@ -45,7 +45,7 @@ export default function LoginPage() {
         className="w-full max-w-md rounded-3xl bg-white p-8 shadow-xl"
       >
         <h1 className="text-3xl font-bold text-slate-950">
-          Entrar en TallerPro
+          Entrar en MSP
         </h1>
 
         <p className="mt-2 text-slate-600">

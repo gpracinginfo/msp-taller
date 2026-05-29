@@ -52,12 +52,12 @@ export function BoardHeader({
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
           <p className="text-sm font-semibold text-blue-700">
-            PANEL CONTROL
+            PANEL CONTROL MSP
           </p>
 
           <div className="flex flex-wrap items-end gap-3">
             <h1 className="text-3xl font-black tracking-tight">
-              GP RACING
+              MSP
             </h1>
 
             <SaveIndicator state={saveState} />

@@ -322,7 +322,7 @@ export function DailySummaryModal({
     if (!pw) return;
 
     let bodyHtml = `<div class="report-header">
-      <div class="report-brand">TALLER GP RACING</div>
+      <div class="report-brand">MSP</div>
       <h1>Resumen diario</h1>
       <div class="report-date">${esc(today)}</div>
     </div>`;
@@ -352,7 +352,7 @@ export function DailySummaryModal({
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Resumen diario - TallerGP</title>
+  <title>Resumen diario - MSP</title>
   <style>
     body { font-family: Arial, sans-serif; color: #000; background: #fff; margin: 20px; font-size: 12px; line-height: 1.4; }
     .report-header { margin-bottom: 20px; }
@@ -387,7 +387,7 @@ export function DailySummaryModal({
           <div className="flex items-start justify-between gap-4">
             <div>
               <p className="text-xs font-black uppercase tracking-widest text-gray-400">
-                TALLER GP RACING
+                MSP
               </p>
               <h2 className="text-2xl font-black text-slate-950">
                 Resumen diario

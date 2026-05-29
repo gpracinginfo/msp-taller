@@ -1,4 +1,4 @@
-export type BoardId = 'particulares' | 'chapa' | 'vtc';
+export type BoardId = 'chapa' | 'mecanica';
 
 export type JobStatus =
   | 'sin_revisar'

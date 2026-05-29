@@ -2,12 +2,10 @@ import { google } from 'googleapis';
 
 export const boardCalendarColor: Record<string, string> = {
   // Google Calendar event colorId:
-  // 4  = rosa / fucsia
-  // 9  = azul
-  // 10 = verde
-  particulares: '4',
+  // 9  = azul  → Chapa-Pintura
+  // 10 = verde → Mecánica
   chapa: '9',
-  vtc: '10'
+  mecanica: '10'
 };
 
 export function getOAuthClient() {

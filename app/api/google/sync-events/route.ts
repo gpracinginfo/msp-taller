@@ -5,32 +5,26 @@ import { createSupabaseAdmin, createSupabaseServer } from '@/lib/supabase-server
 
 export const runtime = 'nodejs';
 
-type BoardId = 'particulares' | 'chapa' | 'vtc';
+type BoardId = 'chapa' | 'mecanica';
 
 const GOOGLE_EVENT_LOOKAHEAD_DAYS = 120;
 const GOOGLE_EVENT_LOOKBACK_DAYS = 0;
 
 const eventColorToBoard: Record<string, BoardId> = {
-  [boardCalendarColor.particulares]: 'particulares',
   [boardCalendarColor.chapa]: 'chapa',
-  [boardCalendarColor.vtc]: 'vtc'
+  [boardCalendarColor.mecanica]: 'mecanica'
 };
 
 const calendarHexColorToBoard: Record<string, BoardId> = {
-  // Rosas / fucsias habituales de Google Calendar
-  '#d81b60': 'particulares',
-  '#e67c73': 'particulares',
-  '#f4511e': 'particulares',
-
-  // Azules habituales
+  // Azules → Chapa-Pintura
   '#039be5': 'chapa',
   '#3f51b5': 'chapa',
   '#4285f4': 'chapa',
 
-  // Verdes habituales
-  '#0b8043': 'vtc',
-  '#33b679': 'vtc',
-  '#7cb342': 'vtc'
+  // Verdes → Mecánica
+  '#0b8043': 'mecanica',
+  '#33b679': 'mecanica',
+  '#7cb342': 'mecanica'
 };
 
 function getGoogleErrorCode(error: unknown) {
@@ -89,12 +83,12 @@ function addDays(date: Date, days: number) {
 function detectBoardFromCalendarName(name: string): BoardId | null {
   const clean = name.toLowerCase();
 
-  if (clean.includes('particular')) return 'particulares';
   if (clean.includes('chapa')) return 'chapa';
   if (clean.includes('pintura')) return 'chapa';
-  if (clean.includes('vtc')) return 'vtc';
-  if (clean.includes('mecanica')) return 'vtc';
-  if (clean.includes('mecánica')) return 'vtc';
+  if (clean.includes('mecanica')) return 'mecanica';
+  if (clean.includes('mecánica')) return 'mecanica';
+  if (clean.includes('mecanico')) return 'mecanica';
+  if (clean.includes('mecánico')) return 'mecanica';
 
   return null;
 }

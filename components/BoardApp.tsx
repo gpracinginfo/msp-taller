@@ -68,7 +68,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   const supabase = useMemo(() => createSupabaseBrowser(), []);
 
   const [userId, setUserId] = useState<string | null>(null);
-  const [activeBoard, setActiveBoard] = useState<BoardId>('particulares');
+  const [activeBoard, setActiveBoard] = useState<BoardId>('chapa');
   const [jobs, setJobs] = useState<Job[]>([]);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<Job | null>(null);
