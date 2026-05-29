@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body { background: #f6f7fb; color: #172033; }
+
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+
+  .daily-summary-print-area,
+  .daily-summary-print-area * {
+    visibility: visible !important;
+  }
+
+  .daily-summary-print-area {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: white !important;
+    color: black !important;
+  }
+
+  .print-hidden,
+  .no-print {
+    display: none !important;
+  }
+
+  @page {
+    margin: 12mm;
+  }
+}
