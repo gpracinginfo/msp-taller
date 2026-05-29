@@ -12,6 +12,7 @@ import type { SaveState } from './board-types';
 import type { BoardInfo } from './board-config';
 import { boards, columns, formatDate, getPriority, priorities, toLocalInput } from './board-config';
 import { DocumentsPanel } from './DocumentsPanel';
+import { JobChat } from './JobChat';
 
 type JobPatch = Partial<Job>;
 
@@ -602,6 +603,8 @@ export function JobModal({
             </div>
           </aside>
         </div>
+
+        <JobChat jobId={job.id} />
       </div>
     </div>
   );

@@ -81,6 +81,14 @@ export type Mechanic = {
   created_at: string;
 };
 
+export type JobMessage = {
+  id: string;
+  job_id: string;
+  user_id: string;
+  message: string;
+  created_at: string;
+};
+
 export type JobFile = {
   id: string;
   job_id: string;
