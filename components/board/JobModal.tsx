@@ -34,6 +34,8 @@ type JobDraft = {
   entry_date: string;
   key_number: string;
   chapa_type: 'chapa' | 'particular' | 'vtc';
+  invoice_number: string;
+  kilometers: string;
 };
 
 const DEFAULT_APPOINTMENT_MINUTES = 90;
@@ -76,7 +78,9 @@ function createDraft(job: Job): JobDraft {
     fane: Boolean(job.fane),
     entry_date: job.entry_date || '',
     key_number: job.key_number || '',
-    chapa_type: job.chapa_type || 'chapa'
+    chapa_type: job.chapa_type || 'chapa',
+    invoice_number: job.invoice_number || '',
+    kilometers: job.kilometers || ''
   };
 }
 
@@ -148,7 +152,9 @@ export function JobModal({
     job.fane,
     job.entry_date,
     job.key_number,
-    job.chapa_type
+    job.chapa_type,
+    job.invoice_number,
+    job.kilometers
   ]);
 
   const previewJob = useMemo<Job>(
@@ -171,7 +177,9 @@ export function JobModal({
       fane: draft.fane,
       entry_date: draft.entry_date || null,
       key_number: draft.key_number,
-      chapa_type: draft.chapa_type
+      chapa_type: draft.chapa_type,
+      invoice_number: draft.invoice_number || null,
+      kilometers: draft.kilometers || null
     }),
     [draft, job]
   );
@@ -221,7 +229,9 @@ export function JobModal({
       fane: draft.fane,
       entry_date: draft.entry_date || null,
       key_number: draft.key_number,
-      chapa_type: draft.chapa_type
+      chapa_type: draft.chapa_type,
+      invoice_number: draft.invoice_number || null,
+      kilometers: draft.kilometers || null
     };
 
     const updated = await onSaveJob(job, patch);
@@ -364,17 +374,17 @@ export function JobModal({
               />
 
               <Field
-                label="Cliente"
-                value={draft.client_name}
-                placeholder="Cliente"
-                onChange={(value) => updateDraft('client_name', value)}
+                label="Nº factura"
+                value={draft.invoice_number}
+                placeholder="Nº factura"
+                onChange={(value) => updateDraft('invoice_number', value)}
               />
 
               <Field
-                label="Teléfono"
-                value={draft.phone}
-                placeholder="Teléfono"
-                onChange={(value) => updateDraft('phone', value)}
+                label="Kilómetros"
+                value={draft.kilometers}
+                placeholder="Ej. 123.456"
+                onChange={(value) => updateDraft('kilometers', value)}
               />
 
               <MechanicField
@@ -567,9 +577,17 @@ export function JobModal({
                 {draft.appointment_start ? formatDate(localInputToIso(draft.appointment_start)) : 'Sin cita'}
               </p>
 
-              <p className="mt-1 truncate text-xs text-gray-600">
-                <strong>Cliente:</strong> {draft.client_name || 'Sin cliente'}
-              </p>
+              {draft.invoice_number && (
+                <p className="mt-1 truncate text-xs text-gray-600">
+                  <strong>Factura:</strong> {draft.invoice_number}
+                </p>
+              )}
+
+              {draft.kilometers && (
+                <p className="mt-1 truncate text-xs text-gray-600">
+                  <strong>Km:</strong> {draft.kilometers}
+                </p>
+              )}
 
               <button
                 type="button"

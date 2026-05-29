@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowLeft, ArrowRight, CalendarDays, GripVertical, KeyRound, Package, Phone, Wrench } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, CalendarDays, FileText, GripVertical, KeyRound, Package, Wrench } from 'lucide-react';
 import type { Job } from '@/lib/types';
 import type { BoardInfo } from './board-config';
 import { formatDate, getPriority, hasPendingParts } from './board-config';
@@ -113,14 +113,16 @@ export function JobCard({
           </div>
         </div>
 
-        <p className="mt-1 truncate text-xs font-semibold text-gray-600">
-          {job.client_name || 'Sin cliente'}
-        </p>
+        {job.invoice_number && (
+          <p className="mt-1 truncate text-[11px] font-semibold text-gray-600">
+            <FileText className="mr-1 inline h-3 w-3" />
+            Fact: {job.invoice_number}
+          </p>
+        )}
 
-        {job.phone && (
+        {job.kilometers && (
           <p className="truncate text-[11px] font-semibold text-gray-500">
-            <Phone className="mr-1 inline h-3 w-3" />
-            {job.phone}
+            {job.kilometers} km
           </p>
         )}
 

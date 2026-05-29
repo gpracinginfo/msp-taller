@@ -129,17 +129,18 @@ function jobHtml(job: Job, index: number): string {
 
   let html = `<div class="summary-row">`;
   html += `<div class="summary-main">${index}. <strong>${esc(job.plate) || 'Sin matrícula'}</strong>`;
-  html += ` · ${esc(job.vehicle) || 'Sin vehículo'} · ${esc(job.client_name) || 'Sin cliente'}`;
+  html += ` · ${esc(job.vehicle) || 'Sin vehículo'}`;
   html += ` (${esc(priority.name)})`;
   if (chapaLabel)       html += ` [${esc(chapaLabel)}]`;
   if (marks.length > 0) html += ` [${marks.join('/')}]`;
   html += `</div>`;
 
   const details: string[] = [];
-  if (job.phone)      details.push(`Tel: ${esc(job.phone)}`);
-  if (job.mechanic)   details.push(`Mec: ${esc(job.mechanic)}`);
-  if (job.key_number) details.push(`Llave: ${esc(job.key_number)}`);
-  if (job.entry_date) details.push(`Entrada: ${formatDate(job.entry_date)}`);
+  if (job.invoice_number) details.push(`Fact: ${esc(job.invoice_number)}`);
+  if (job.kilometers)     details.push(`Km: ${esc(job.kilometers)}`);
+  if (job.mechanic)       details.push(`Mec: ${esc(job.mechanic)}`);
+  if (job.key_number)     details.push(`Llave: ${esc(job.key_number)}`);
+  if (job.entry_date)     details.push(`Entrada: ${formatDate(job.entry_date)}`);
   if (details.length > 0) html += `<div class="summary-detail">${details.join(' · ')}</div>`;
 
   if (citaText)
@@ -185,7 +186,7 @@ function JobRow({ job, index, onOpenJob }: { job: Job; index: number; onOpenJob:
       : null;
 
   const hasDetails =
-    job.phone || job.mechanic || job.key_number || job.entry_date;
+    job.invoice_number || job.kilometers || job.mechanic || job.key_number || job.entry_date;
 
   return (
     <div
@@ -202,7 +203,7 @@ function JobRow({ job, index, onOpenJob }: { job: Job; index: number; onOpenJob:
           {job.plate || 'Sin matrícula'}
         </span>
         <span className="text-sm text-slate-700">
-          · {job.vehicle || 'Sin vehículo'} · {job.client_name || 'Sin cliente'}
+          · {job.vehicle || 'Sin vehículo'}
         </span>
         <span className="text-xs text-gray-400">({priority.name})</span>
         {chapaLabel && (
@@ -215,7 +216,8 @@ function JobRow({ job, index, onOpenJob }: { job: Job; index: number; onOpenJob:
 
       {hasDetails && (
         <div className="ml-4 mt-0.5 flex flex-wrap gap-x-4 text-xs text-gray-500">
-          {job.phone && <span>Tel: {job.phone}</span>}
+          {job.invoice_number && <span>Fact: {job.invoice_number}</span>}
+          {job.kilometers && <span>Km: {job.kilometers}</span>}
           {job.mechanic && <span>Mec: {job.mechanic}</span>}
           {job.key_number && <span>Llave: {job.key_number}</span>}
           {job.entry_date && <span>Entrada: {formatDate(job.entry_date)}</span>}

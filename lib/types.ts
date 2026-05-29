@@ -51,6 +51,9 @@ export type Job = {
 
   chapa_type: 'chapa' | 'particular' | 'vtc' | null;
 
+  invoice_number: string | null;
+  kilometers: string | null;
+
   created_at: string;
   updated_at?: string | null;
 };

@@ -12,13 +12,11 @@ function cleanText(value: unknown) {
 function buildCalendarSummary(job: {
   plate?: string | null;
   vehicle?: string | null;
-  client_name?: string | null;
   work_description?: string | null;
 }) {
   const parts = [
     cleanText(job.plate),
     cleanText(job.vehicle),
-    cleanText(job.client_name),
     cleanText(job.work_description)
   ].filter(Boolean);
 
@@ -26,15 +24,15 @@ function buildCalendarSummary(job: {
 }
 
 function buildCalendarDescription(job: {
-  client_name?: string | null;
-  phone?: string | null;
+  invoice_number?: string | null;
+  kilometers?: string | null;
   work_description?: string | null;
 }) {
   return [
-    `Cliente: ${cleanText(job.client_name) || 'Sin cliente'}`,
-    `Teléfono: ${cleanText(job.phone) || 'Sin teléfono'}`,
+    job.invoice_number ? `Factura: ${cleanText(job.invoice_number)}` : null,
+    job.kilometers ? `Km: ${cleanText(job.kilometers)}` : null,
     `Trabajo: ${cleanText(job.work_description) || 'Sin trabajo indicado'}`
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 }
 
 function getGoogleErrorCode(error: unknown) {

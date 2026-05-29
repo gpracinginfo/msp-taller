@@ -68,7 +68,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   const supabase = useMemo(() => createSupabaseBrowser(), []);
 
   const [userId, setUserId] = useState<string | null>(null);
-  const [activeBoard, setActiveBoard] = useState<BoardId>('chapa');
+  const [activeBoard, setActiveBoard] = useState<BoardId>('mecanica');
   const [jobs, setJobs] = useState<Job[]>([]);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<Job | null>(null);
@@ -192,8 +192,6 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
       const matchesSearch = [
         job.plate,
         job.vehicle,
-        job.client_name,
-        job.phone,
         job.priority || '',
         getPriority(job.priority).name,
         job.work_description,
@@ -204,7 +202,9 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
         job.fane ? 'fane' : '',
         job.key_number || '',
         job.entry_date || '',
-        job.chapa_type || ''
+        job.chapa_type || '',
+        job.invoice_number || '',
+        job.kilometers || ''
       ]
         .join(' ')
         .toLowerCase()
@@ -225,8 +225,6 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
         const matchesSearch = [
           job.plate,
           job.vehicle,
-          job.client_name,
-          job.phone,
           job.priority || '',
           getPriority(job.priority).name,
           job.work_description,
@@ -237,7 +235,9 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
           job.fane ? 'fane' : '',
           job.key_number || '',
           job.entry_date || '',
-          job.chapa_type || ''
+          job.chapa_type || '',
+          job.invoice_number || '',
+          job.kilometers || ''
         ]
           .join(' ')
           .toLowerCase()
@@ -430,6 +430,15 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
       plate: cleanPlate
     };
 
+    if (finalPatch.status === 'entrega') {
+      const invoiceOk = String(finalPatch.invoice_number ?? job.invoice_number ?? '').trim().length > 0;
+      const kmOk = String(finalPatch.kilometers ?? job.kilometers ?? '').trim().length > 0;
+      if (!invoiceOk || !kmOk) {
+        showToast('Para marcar como entregado debes rellenar Nº factura y Kilómetros.', 'error');
+        return null;
+      }
+    }
+
     if (finalPatch.pending_parts && String(finalPatch.pending_parts).trim().length > 0 && job.status !== 'piezas') {
       finalPatch.status = 'piezas';
     }
@@ -496,7 +505,9 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
         fane: false,
         entry_date: new Date().toISOString().slice(0, 10),
         key_number: '',
-        chapa_type: activeBoard === 'chapa' ? 'chapa' : null
+        chapa_type: activeBoard === 'chapa' ? 'chapa' : null,
+        invoice_number: '',
+        kilometers: ''
       })
       .select('*')
       .single();
@@ -773,7 +784,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
           items={tomorrowAppointments.map((job) => ({
             id: job.id,
             title: `${job.plate || 'Sin matrícula'} · ${job.vehicle || 'Sin vehículo'}`,
-            subtitle: `${formatDate(job.appointment_start)} · ${job.client_name || 'Sin cliente'} · ${getPriority(job.priority).name}`,
+            subtitle: `${formatDate(job.appointment_start)} · ${getPriority(job.priority).name}`,
             onClick: () => setSelected(job)
           }))}
         />
@@ -792,7 +803,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
             return {
               id: job.id,
               title: `${job.plate || 'Sin matrícula'} · ${job.vehicle || 'Sin vehículo'}`,
-              subtitle: `${formatDate(job.appointment_start)} · ${job.client_name || 'Sin cliente'} · ${getPriority(job.priority).name}${chapaLabel}`,
+              subtitle: `${formatDate(job.appointment_start)} · ${getPriority(job.priority).name}${chapaLabel}`,
               onClick: () => setSelected(job)
             };
           })}
@@ -806,8 +817,8 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
             id: job.id,
             title: `${job.plate || 'Sin matrícula'} · ${job.vehicle || 'Sin vehículo'}`,
             subtitle: hasPendingParts(job)
-              ? `${job.client_name || 'Sin cliente'} · ${job.pending_parts}`
-              : `${job.client_name || 'Sin cliente'} · Vehículo en estado Esperando piezas`,
+              ? `${job.pending_parts}`
+              : `Vehículo en estado Esperando piezas`,
             onClick: () => setSelected(job)
           }))}
         />

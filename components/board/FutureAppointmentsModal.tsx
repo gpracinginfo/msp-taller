@@ -24,13 +24,13 @@ export function FutureAppointmentsModal({
         return [
           job.plate,
           job.vehicle,
-          job.client_name,
-          job.phone || '',
           job.mechanic || '',
           job.internal_notes || '',
           job.pending_parts || '',
           job.key_number || '',
           job.chapa_type || '',
+          job.invoice_number || '',
+          job.kilometers || '',
           getPriority(job.priority).name,
           job.priority || ''
         ]
@@ -110,9 +110,11 @@ export function FutureAppointmentsModal({
                         {job.plate || 'Sin matrícula'} · {job.vehicle || 'Sin vehículo'}
                       </p>
 
-                      <p className="mt-1 truncate text-xs font-bold text-gray-600">
-                        {job.client_name || 'Sin cliente'}
-                      </p>
+                      {job.invoice_number && (
+                        <p className="mt-1 truncate text-xs font-bold text-gray-600">
+                          Fact: {job.invoice_number}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex shrink-0 flex-col items-end gap-1">
@@ -137,9 +139,9 @@ export function FutureAppointmentsModal({
                       Cita: {formatDate(job.appointment_start)}
                     </p>
 
-                    {job.phone && (
+                    {job.kilometers && (
                       <p className="truncate">
-                        Teléfono: {job.phone}
+                        Km: {job.kilometers}
                       </p>
                     )}
 

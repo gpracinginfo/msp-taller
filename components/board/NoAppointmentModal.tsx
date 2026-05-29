@@ -23,12 +23,12 @@ export function NoAppointmentModal({
       return [
         job.plate,
         job.vehicle,
-        job.client_name,
-        job.phone,
         job.work_description,
         job.mechanic || '',
         job.internal_notes || '',
         job.pending_parts || '',
+        job.invoice_number || '',
+        job.kilometers || '',
         getPriority(job.priority).name,
         job.david ? 'david' : '',
         job.fane ? 'fane' : '',
@@ -111,9 +111,11 @@ export function NoAppointmentModal({
                         {job.plate || 'Sin matrícula'} · {job.vehicle || 'Sin vehículo'}
                       </p>
 
-                      <p className="mt-1 truncate text-xs font-bold text-gray-600">
-                        {job.client_name || 'Sin cliente'}
-                      </p>
+                      {job.invoice_number && (
+                        <p className="mt-1 truncate text-xs font-bold text-gray-600">
+                          Fact: {job.invoice_number}
+                        </p>
+                      )}
                     </div>
 
                     <div className="flex shrink-0 flex-col items-end gap-1">
@@ -146,9 +148,11 @@ export function NoAppointmentModal({
                   </div>
 
                   <div className="mt-2 grid gap-1 text-xs font-semibold text-gray-500">
-                    <p className="truncate">
-                      Teléfono: {job.phone || 'Sin teléfono'}
-                    </p>
+                    {job.kilometers && (
+                      <p className="truncate">
+                        Km: {job.kilometers}
+                      </p>
+                    )}
 
                     <p className="truncate">
                       Trabajo: {job.work_description || 'Sin trabajo indicado'}

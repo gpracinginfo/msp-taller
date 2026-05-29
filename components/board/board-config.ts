@@ -35,18 +35,18 @@ export type BoardStats = {
 
 export const boards: BoardInfo[] = [
   {
-    id: 'chapa',
-    name: 'Chapa-Pintura',
-    short: 'CHAPA',
-    className: 'bg-blue-50 text-blue-800 border-blue-200',
-    activeClass: 'bg-blue-600 text-white border-blue-600'
-  },
-  {
     id: 'mecanica',
     name: 'Mecánica',
     short: 'MEC',
     className: 'bg-green-50 text-green-800 border-green-200',
     activeClass: 'bg-green-600 text-white border-green-600'
+  },
+  {
+    id: 'chapa',
+    name: 'Chapa-Pintura',
+    short: 'CHAPA',
+    className: 'bg-blue-50 text-blue-800 border-blue-200',
+    activeClass: 'bg-blue-600 text-white border-blue-600'
   }
 ];
 
