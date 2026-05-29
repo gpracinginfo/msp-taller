@@ -40,16 +40,12 @@ type JobDraft = {
 
 const DEFAULT_APPOINTMENT_MINUTES = 90;
 
-const WORK_PRESETS = [
-  'Presupuesto',
-  'Diagnóstico',
-  'Revisión completa',
-  'Pastillas delanteras',
-  'Pastillas traseras',
-  'Neu Del IZQ',
-  'Neu Del DCH',
-  'Neu Tras IZQ',
-  'Neu Tras DCH'
+const WORK_PRESET_ROWS = [
+  ['Presupuesto', 'Diagnóstico'],
+  ['Revisión completa'],
+  ['Pastillas delanteras', 'Pastillas traseras'],
+  ['Neu Del IZQ', 'Neu Del DCH'],
+  ['Neu Tras IZQ', 'Neu Tras DCH']
 ];
 
 function addMinutesToLocalInput(value: string, minutes: number) {
@@ -772,30 +768,32 @@ function WorkDescriptionField({
         className="mt-1 w-full resize-none rounded-xl border px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
       />
 
-      <div className="mt-2 flex flex-wrap gap-2">
-        {WORK_PRESETS.map((preset) => {
-          const checked = lines.includes(preset);
-
-          return (
-            <label
-              key={preset}
-              className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-xs font-black ${
-                checked
-                  ? 'border-blue-300 bg-blue-50 text-blue-800'
-                  : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
-              }`}
-            >
-              <input
-                type="checkbox"
-                checked={checked}
-                onChange={(event) => togglePreset(preset, event.target.checked)}
-                className="h-4 w-4"
-              />
-
-              {preset}
-            </label>
-          );
-        })}
+      <div className="mt-2 flex flex-col gap-1.5">
+        {WORK_PRESET_ROWS.map((row, rowIndex) => (
+          <div key={rowIndex} className="flex flex-wrap gap-2">
+            {row.map((preset) => {
+              const checked = lines.includes(preset);
+              return (
+                <label
+                  key={preset}
+                  className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-xs font-black ${
+                    checked
+                      ? 'border-blue-300 bg-blue-50 text-blue-800'
+                      : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={checked}
+                    onChange={(event) => togglePreset(preset, event.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  {preset}
+                </label>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );
