@@ -114,7 +114,8 @@ export function JobModal({
   onSendAppointmentWhatsapp,
   onUploadFile,
   onDeleteJob,
-  onDraftPendingParts
+  onDraftPendingParts,
+  onChatMessageSent
 }: {
   job: Job;
   activeBoard: BoardInfo;
@@ -128,6 +129,7 @@ export function JobModal({
   onUploadFile: (job: Job, type: UploadFileType, file: File) => void;
   onDeleteJob: (job: Job) => void;
   onDraftPendingParts: (job: Job, value: string) => void;
+  onChatMessageSent?: (jobId: string) => void;
 }) {
   const priority = getPriority(draftSafePriority(job.priority));
   const [draft, setDraft] = useState<JobDraft>(() => createDraft(job));
@@ -604,7 +606,11 @@ export function JobModal({
           </aside>
         </div>
 
-        <JobChat jobId={job.id} />
+        <JobChat
+          jobId={job.id}
+          plate={draft.plate}
+          onMessageSent={() => onChatMessageSent?.(job.id)}
+        />
       </div>
     </div>
   );

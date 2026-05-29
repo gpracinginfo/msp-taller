@@ -1,10 +1,9 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { MessageSquare, Send } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { MessageSquare, Send, X } from 'lucide-react';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import type { JobMessage } from '@/lib/types';
-import { JobChatModal } from './JobChatModal';
 
 function formatChatTime(dateStr: string): string {
   return new Date(dateStr).toLocaleString('es-ES', {
@@ -16,13 +15,15 @@ function formatChatTime(dateStr: string): string {
   });
 }
 
-export function JobChat({
+export function JobChatModal({
   jobId,
   plate,
+  onClose,
   onMessageSent
 }: {
   jobId: string;
   plate: string;
+  onClose: () => void;
   onMessageSent?: () => void;
 }) {
   const supabase = useMemo(() => createSupabaseBrowser(), []);
@@ -30,7 +31,7 @@ export function JobChat({
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [showModal, setShowModal] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   const loadMessages = useCallback(async () => {
     setLoading(true);
@@ -38,13 +39,18 @@ export function JobChat({
       .from('job_messages')
       .select('*')
       .eq('job_id', jobId)
-      .order('created_at', { ascending: false })
-      .limit(3);
-    setMessages(((data as JobMessage[]) || []).reverse());
+      .order('created_at', { ascending: true });
+    setMessages((data as JobMessage[]) || []);
     setLoading(false);
   }, [supabase, jobId]);
 
   useEffect(() => { loadMessages(); }, [loadMessages]);
+
+  useEffect(() => {
+    if (!loading) {
+      bottomRef.current?.scrollIntoView({ behavior: 'instant' });
+    }
+  }, [loading, messages]);
 
   async function handleSend() {
     const text = input.trim();
@@ -58,54 +64,51 @@ export function JobChat({
       .select('*')
       .single();
     if (!error && data) {
-      setMessages((prev) => [...prev.slice(-2), data as JobMessage]);
+      setMessages((prev) => [...prev, data as JobMessage]);
       setInput('');
       onMessageSent?.();
     }
     setSending(false);
   }
 
-  function handleModalMessageSent() {
-    loadMessages();
-    onMessageSent?.();
-  }
-
   return (
-    <>
-      <div className="mt-4 rounded-2xl border bg-slate-50 p-3">
-        <div className="mb-2 flex items-center justify-between">
-          <h4 className="flex items-center gap-2 text-sm font-black text-slate-700">
-            <MessageSquare className="h-4 w-4" />
-            Chat interno
-          </h4>
+    <div className="fixed inset-0 z-[60] grid place-items-center bg-black/50 p-3">
+      <div className="flex max-h-[85vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl bg-white shadow-2xl">
+
+        <div className="flex shrink-0 items-center justify-between border-b px-5 py-4">
+          <h3 className="flex items-center gap-2 text-lg font-black text-slate-900">
+            <MessageSquare className="h-5 w-5 text-blue-600" />
+            Chat interno · {plate || 'Sin matrícula'}
+          </h3>
           <button
             type="button"
-            onClick={() => setShowModal(true)}
-            className="rounded-lg border bg-white px-2.5 py-1 text-[11px] font-black text-blue-700 hover:bg-blue-50"
+            onClick={onClose}
+            className="rounded-xl border bg-white p-2 hover:bg-gray-50"
           >
-            Ver chat completo
+            <X className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="mb-3 space-y-1.5">
+        <div className="flex-1 overflow-y-auto space-y-2 p-4">
           {loading ? (
-            <p className="py-1 text-xs text-gray-400">Cargando...</p>
+            <p className="py-8 text-center text-xs text-gray-400">Cargando mensajes...</p>
           ) : messages.length === 0 ? (
-            <p className="py-1 text-xs text-gray-400">No hay mensajes internos.</p>
+            <p className="py-8 text-center text-xs text-gray-400">No hay mensajes internos.</p>
           ) : (
             messages.map((msg) => (
               <div
                 key={msg.id}
-                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs shadow-sm"
+                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-xs shadow-sm"
               >
                 <p className="font-semibold leading-snug text-slate-800">{msg.message}</p>
                 <p className="mt-0.5 text-[11px] text-gray-400">{formatChatTime(msg.created_at)}</p>
               </div>
             ))
           )}
+          <div ref={bottomRef} />
         </div>
 
-        <div className="flex gap-2">
+        <div className="shrink-0 flex gap-2 border-t px-4 py-3">
           <input
             type="text"
             value={input}
@@ -113,7 +116,7 @@ export function JobChat({
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
             }}
-            placeholder="Escribe un comentario..."
+            placeholder="Escribe un comentario interno..."
             className="flex-1 rounded-xl border bg-white px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
           />
           <button
@@ -127,15 +130,6 @@ export function JobChat({
           </button>
         </div>
       </div>
-
-      {showModal && (
-        <JobChatModal
-          jobId={jobId}
-          plate={plate}
-          onClose={() => setShowModal(false)}
-          onMessageSent={handleModalMessageSent}
-        />
-      )}
-    </>
+    </div>
   );
 }

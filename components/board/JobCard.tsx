@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowLeft, ArrowRight, CalendarDays, FileText, GripVertical, KeyRound, Package, Wrench } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, CalendarDays, FileText, GripVertical, KeyRound, MessageSquare, Package, Wrench } from 'lucide-react';
 import type { Job } from '@/lib/types';
 import type { BoardInfo } from './board-config';
 import { formatDate, getPriority, hasPendingParts } from './board-config';
@@ -19,20 +19,24 @@ export function JobCard({
   job,
   activeBoard,
   isDragging,
+  messageCount = 0,
   onOpen,
   onDragStart,
   onDragEnd,
   onMove,
+  onOpenChat,
   onToggleChapaType
 }: {
   job: Job;
   activeBoard: BoardInfo;
   isDragging: boolean;
+  messageCount?: number;
   onOpen: (job: Job) => void;
   onDragStart: (jobId: string) => void;
   onDragEnd: () => void;
   onMove: (job: Job, direction: number) => void;
   onSyncCalendar: (job: Job) => void;
+  onOpenChat: () => void;
   onToggleChapaType: (job: Job) => void;
 }) {
   const priorityInfo = getPriority(job.priority);
@@ -194,6 +198,18 @@ export function JobCard({
             >
               <AlertTriangle className="h-3.5 w-3.5" />
             </span>
+          )}
+
+          {messageCount > 0 && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); onOpenChat(); }}
+              title="Tiene mensajes internos"
+              className="inline-flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-1.5 py-1.5 text-blue-700 hover:bg-blue-100"
+            >
+              <MessageSquare className="h-3.5 w-3.5" />
+              <span className="text-[10px] font-black leading-none">{messageCount}</span>
+            </button>
           )}
         </div>
       </div>

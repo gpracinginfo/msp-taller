@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
 import type { BoardId, Job, JobStatus, UploadFileType } from '@/lib/types';
+import { JobChatModal } from './board/JobChatModal';
 import type { SaveState } from './board/board-types';
 import type { ToastMessage, ToastTone } from './board/Toast';
 import { BoardHeader } from './board/BoardHeader';
@@ -82,6 +83,8 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   const [showNoAppointmentModal, setShowNoAppointmentModal] = useState(false);
   const [showFutureAppointmentsModal, setShowFutureAppointmentsModal] = useState(false);
   const [showDailySummaryModal, setShowDailySummaryModal] = useState(false);
+  const [messageCountByJobId, setMessageCountByJobId] = useState<Record<string, number>>({});
+  const [chatJob, setChatJob] = useState<Job | null>(null);
 
   const jobsRef = useRef<Job[]>([]);
   const saveStateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -167,6 +170,25 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   useEffect(() => {
     loadJobs();
   }, [loadJobs]);
+
+  const loadMessageCounts = useCallback(async () => {
+    const { data } = await supabase.from('job_messages').select('job_id');
+    if (!data) return;
+    const counts: Record<string, number> = {};
+    for (const row of data as { job_id: string }[]) {
+      counts[row.job_id] = (counts[row.job_id] || 0) + 1;
+    }
+    setMessageCountByJobId(counts);
+  }, [supabase]);
+
+  useEffect(() => { loadMessageCounts(); }, [loadMessageCounts]);
+
+  const incrementChatCount = useCallback((jobId: string) => {
+    setMessageCountByJobId((prev) => ({
+      ...prev,
+      [jobId]: (prev[jobId] || 0) + 1
+    }));
+  }, []);
 
   const { findClientByPlate, saveClientFromJob } = useClientAutoComplete({
     supabase,
@@ -766,6 +788,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
           activeBoard={activeBoardInfo}
           draggingJobId={draggingJobId}
           dragOverStatus={dragOverStatus}
+          messageCountByJobId={messageCountByJobId}
           onDragOver={setDragOverStatus}
           onDragLeave={(status) => {
             setDragOverStatus((current) => (current === status ? null : current));
@@ -776,6 +799,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
           onDragEnd={finishDragSoon}
           onMoveJob={moveJob}
           onSyncCalendar={syncCalendar}
+          onOpenChat={setChatJob}
           onToggleChapaType={toggleChapaType}
         />
       )}
@@ -842,6 +866,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
           onUploadFile={uploadFile}
           onDeleteJob={deleteJob}
           onDraftPendingParts={draftPendingParts}
+          onChatMessageSent={incrementChatCount}
         />
       )}
 
@@ -897,6 +922,15 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
             setSelected(job);
             setShowDailySummaryModal(false);
           }}
+        />
+      )}
+
+      {chatJob && (
+        <JobChatModal
+          jobId={chatJob.id}
+          plate={chatJob.plate}
+          onClose={() => setChatJob(null)}
+          onMessageSent={() => incrementChatCount(chatJob.id)}
         />
       )}
 

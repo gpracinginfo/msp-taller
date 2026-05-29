@@ -8,6 +8,7 @@ export function KanbanBoard({
   activeBoard,
   draggingJobId,
   dragOverStatus,
+  messageCountByJobId,
   onDragOver,
   onDragLeave,
   onDrop,
@@ -16,12 +17,14 @@ export function KanbanBoard({
   onDragEnd,
   onMoveJob,
   onSyncCalendar,
+  onOpenChat,
   onToggleChapaType
 }: {
   jobs: Job[];
   activeBoard: BoardInfo;
   draggingJobId: string | null;
   dragOverStatus: JobStatus | null;
+  messageCountByJobId: Record<string, number>;
   onDragOver: (status: JobStatus) => void;
   onDragLeave: (status: JobStatus) => void;
   onDrop: (status: JobStatus, jobId: string | null) => void;
@@ -30,6 +33,7 @@ export function KanbanBoard({
   onDragEnd: () => void;
   onMoveJob: (job: Job, direction: number) => void;
   onSyncCalendar: (job: Job) => void;
+  onOpenChat: (job: Job) => void;
   onToggleChapaType: (job: Job) => void;
 }) {
   return (
@@ -44,6 +48,7 @@ export function KanbanBoard({
             activeBoard={activeBoard}
             draggingJobId={draggingJobId}
             isDragOver={dragOverStatus === column.id}
+            messageCountByJobId={messageCountByJobId}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
             onDrop={onDrop}
@@ -52,6 +57,7 @@ export function KanbanBoard({
             onDragEnd={onDragEnd}
             onMoveJob={onMoveJob}
             onSyncCalendar={onSyncCalendar}
+            onOpenChat={onOpenChat}
             onToggleChapaType={onToggleChapaType}
           />
         ))}

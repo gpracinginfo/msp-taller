@@ -8,6 +8,7 @@ export function KanbanColumn({
   activeBoard,
   draggingJobId,
   isDragOver,
+  messageCountByJobId,
   onDragOver,
   onDragLeave,
   onDrop,
@@ -16,6 +17,7 @@ export function KanbanColumn({
   onDragEnd,
   onMoveJob,
   onSyncCalendar,
+  onOpenChat,
   onToggleChapaType
 }: {
   column: ColumnInfo;
@@ -23,6 +25,7 @@ export function KanbanColumn({
   activeBoard: BoardInfo;
   draggingJobId: string | null;
   isDragOver: boolean;
+  messageCountByJobId: Record<string, number>;
   onDragOver: (status: JobStatus) => void;
   onDragLeave: (status: JobStatus) => void;
   onDrop: (status: JobStatus, jobId: string | null) => void;
@@ -31,6 +34,7 @@ export function KanbanColumn({
   onDragEnd: () => void;
   onMoveJob: (job: Job, direction: number) => void;
   onSyncCalendar: (job: Job) => void;
+  onOpenChat: (job: Job) => void;
   onToggleChapaType: (job: Job) => void;
 }) {
   return (
@@ -69,11 +73,13 @@ export function KanbanColumn({
             job={job}
             activeBoard={activeBoard}
             isDragging={draggingJobId === job.id}
+            messageCount={messageCountByJobId[job.id] || 0}
             onOpen={onOpenJob}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
             onMove={onMoveJob}
             onSyncCalendar={onSyncCalendar}
+            onOpenChat={() => onOpenChat(job)}
             onToggleChapaType={onToggleChapaType}
           />
         ))}
