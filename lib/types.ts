@@ -54,6 +54,8 @@ export type Job = {
   invoice_number: string | null;
   kilometers: string | null;
 
+  delivered_at: string | null;
+
   created_at: string;
   updated_at?: string | null;
 };

@@ -327,6 +327,10 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
     const previous = jobsRef.current.find((job) => job.id === id);
     const finalPatch = buildAppointmentPatch(id, patch);
 
+    if (finalPatch.status === 'entrega' && !previous?.delivered_at) {
+      finalPatch.delivered_at = new Date().toISOString();
+    }
+
     if (previous) {
       mergeJob(id, finalPatch);
     }
