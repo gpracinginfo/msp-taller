@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
-import { ExternalLink, FileText, Package, Trash2, Upload } from 'lucide-react';
+import { ExternalLink, FileText, Trash2, Upload } from 'lucide-react';
 import type { JobFile, UploadFileType } from '@/lib/types';
 
 export function DocumentsPanel({
@@ -63,11 +63,7 @@ export function DocumentsPanel({
           onFile={(file) => onFile('presupuesto', file)}
         />
 
-        <UploadBox
-          label="Albarán piezas"
-          icon={<Package className="h-4 w-4" />}
-          onFile={(file) => onFile('albaran', file)}
-        />
+        {/* Albarán piezas oculto en MSP */}
       </div>
 
       <div className="mt-3 border-t pt-3">

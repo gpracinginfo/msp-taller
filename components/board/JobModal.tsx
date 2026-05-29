@@ -41,9 +41,15 @@ type JobDraft = {
 const DEFAULT_APPOINTMENT_MINUTES = 90;
 
 const WORK_PRESETS = [
-  'Trabajo pendiente de completar',
   'Presupuesto',
-  'Diagnóstico'
+  'Diagnóstico',
+  'Revisión completa',
+  'Pastillas delanteras',
+  'Pastillas traseras',
+  'Neu Del IZQ',
+  'Neu Del DCH',
+  'Neu Tras IZQ',
+  'Neu Tras DCH'
 ];
 
 function addMinutesToLocalInput(value: string, minutes: number) {
