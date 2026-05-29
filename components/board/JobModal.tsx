@@ -500,6 +500,12 @@ export function JobModal({
               />
             </div>
 
+            <JobChat
+              jobId={job.id}
+              plate={draft.plate}
+              onMessageSent={() => onChatMessageSent?.(job.id)}
+            />
+
             <div className="mt-3 flex flex-col items-end gap-2">
               <div className="flex items-center gap-3">
                 {draft.fane && (
@@ -605,12 +611,6 @@ export function JobModal({
             </div>
           </aside>
         </div>
-
-        <JobChat
-          jobId={job.id}
-          plate={draft.plate}
-          onMessageSent={() => onChatMessageSent?.(job.id)}
-        />
       </div>
     </div>
   );
