@@ -12,6 +12,8 @@ import { InfoPanel } from './board/InfoPanel';
 import { JobModal } from './board/JobModal';
 import { KanbanBoard } from './board/KanbanBoard';
 import { MechanicsModal } from './board/MechanicsModal';
+import { SuppliersModal } from './board/SuppliersModal';
+import { useSuppliers } from './board/useSuppliers';
 import { MetricsBar } from './board/MetricsBar';
 import { DailySummaryModal } from './board/DailySummaryModal';
 import { FutureAppointmentsModal } from './board/FutureAppointmentsModal';
@@ -83,6 +85,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   const [showNoAppointmentModal, setShowNoAppointmentModal] = useState(false);
   const [showFutureAppointmentsModal, setShowFutureAppointmentsModal] = useState(false);
   const [showDailySummaryModal, setShowDailySummaryModal] = useState(false);
+  const [showSuppliersModal, setShowSuppliersModal] = useState(false);
   const [messageCountByJobId, setMessageCountByJobId] = useState<Record<string, number>>({});
   const [chatJob, setChatJob] = useState<Job | null>(null);
 
@@ -197,6 +200,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   });
 
   const { mechanics, loading: mechanicsLoading, error: mechanicsError, addMechanic, deactivateMechanic } = useMechanics({ supabase });
+  const { suppliers, loading: suppliersLoading, error: suppliersError, addSupplier, updateSupplier } = useSuppliers({ supabase });
 
   const activeBoardInfo = boards.find((board) => board.id === activeBoard) || boards[0];
 
@@ -772,6 +776,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
         onSyncGoogleCalendar={syncGoogleCalendar}
         onOpenDeliveredHistory={() => setShowDeliveredHistory(true)}
         onOpenMechanics={() => setShowMechanicsModal(true)}
+        onOpenSuppliers={() => setShowSuppliersModal(true)}
         onOpenDailySummary={() => setShowDailySummaryModal(true)}
         onLogout={logout}
       />
@@ -858,6 +863,8 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
           activeBoard={boards.find((board) => board.id === selected.board_id) || activeBoardInfo}
           saveState={saveState}
           mechanics={mechanics}
+          suppliers={suppliers}
+          suppliersLoading={suppliersLoading}
           onClose={() => setSelected(null)}
           onSaveJob={saveJobDraft}
           onApplyPlateAndFindClient={applyPlateAndFindClient}
@@ -889,6 +896,17 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
           onAdd={addMechanic}
           onDeactivate={deactivateMechanic}
           onClose={() => setShowMechanicsModal(false)}
+        />
+      )}
+
+      {showSuppliersModal && (
+        <SuppliersModal
+          suppliers={suppliers}
+          loading={suppliersLoading}
+          error={suppliersError}
+          onAdd={addSupplier}
+          onUpdate={updateSupplier}
+          onClose={() => setShowSuppliersModal(false)}
         />
       )}
 

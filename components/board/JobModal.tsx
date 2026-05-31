@@ -8,7 +8,7 @@ import {
   Trash2,
   X
 } from 'lucide-react';
-import type { BoardId, Job, JobPriority, JobStatus, Mechanic, UploadFileType } from '@/lib/types';
+import type { BoardId, Job, JobPriority, JobStatus, Mechanic, Supplier, UploadFileType } from '@/lib/types';
 import type { SaveState } from './board-types';
 import type { BoardInfo } from './board-config';
 import { boards, columns, formatDate, getPriority, priorities, toLocalInput } from './board-config';
@@ -109,6 +109,8 @@ export function JobModal({
   activeBoard,
   saveState,
   mechanics,
+  suppliers,
+  suppliersLoading,
   onClose,
   onSaveJob,
   onApplyPlateAndFindClient,
@@ -123,6 +125,8 @@ export function JobModal({
   activeBoard: BoardInfo;
   saveState: SaveState;
   mechanics: Mechanic[];
+  suppliers: Supplier[];
+  suppliersLoading: boolean;
   onClose: () => void;
   onSaveJob: (job: Job, patch: JobPatch) => Promise<Job | null>;
   onApplyPlateAndFindClient: (job: Job, plate: string) => Promise<Job | null>;
@@ -640,6 +644,8 @@ export function JobModal({
     {showPartsModal && (
       <PartsOrderModal
         job={previewJob}
+        suppliers={suppliers}
+        suppliersLoading={suppliersLoading}
         onClose={() => setShowPartsModal(false)}
       />
     )}

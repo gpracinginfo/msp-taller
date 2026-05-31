@@ -99,3 +99,15 @@ export type JobFile = {
   created_at: string;
   signedUrl?: string | null;
 };
+
+export type Supplier = {
+  id: string;
+  name: string;
+  method: string;
+  url: string | null;
+  phone: string | null;
+  email: string | null;
+  notes: string | null;
+  active: boolean;
+  created_at: string;
+};

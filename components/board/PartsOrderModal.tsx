@@ -1,28 +1,41 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Copy, ExternalLink, Mail, MessageCircle, PackagePlus, X } from 'lucide-react';
-import type { Job } from '@/lib/types';
+import type { Job, Supplier } from '@/lib/types';
 import { boards } from './board-config';
-import { PARTS_SUPPLIERS } from './parts-suppliers';
 import { Toast } from './Toast';
 import type { ToastMessage } from './Toast';
 
 export function PartsOrderModal({
   job,
+  suppliers,
+  suppliersLoading,
   onClose
 }: {
   job: Job;
+  suppliers: Supplier[];
+  suppliersLoading: boolean;
   onClose: () => void;
 }) {
   const boardName = boards.find((b) => b.id === job.board_id)?.name ?? job.board_id;
 
-  const [supplierId, setSupplierId] = useState(PARTS_SUPPLIERS[0]?.id ?? '');
+  const activeSuppliers = useMemo(() => suppliers.filter((s) => s.active), [suppliers]);
+
+  const [supplierId, setSupplierId] = useState<string>(() => activeSuppliers[0]?.id ?? '');
   const [partsText, setPartsText] = useState(
     (job.pending_parts || job.work_description || '') as string
   );
   const [observations, setObservations] = useState('');
   const [toast, setToast] = useState<ToastMessage | null>(null);
 
-  const supplier = PARTS_SUPPLIERS.find((s) => s.id === supplierId) ?? null;
+  useEffect(() => {
+    setSupplierId((current) => {
+      if (activeSuppliers.length === 0) return '';
+      if (current && activeSuppliers.some((s) => s.id === current)) return current;
+      return activeSuppliers[0].id;
+    });
+  }, [activeSuppliers]);
+
+  const supplier = activeSuppliers.find((s) => s.id === supplierId) ?? null;
 
   const orderText = useMemo(() => {
     const lines: string[] = [
@@ -123,20 +136,29 @@ export function PartsOrderModal({
 
           {/* Supplier selector */}
           <div className="mb-3">
-            <label className="block">
-              <span className="text-xs font-black text-gray-600">Proveedor</span>
-              <select
-                value={supplierId}
-                onChange={(e) => setSupplierId(e.target.value)}
-                className="mt-1 w-full rounded-xl border bg-white px-3 py-2 text-xs font-semibold outline-none focus:border-amber-500"
-              >
-                {PARTS_SUPPLIERS.map((s) => (
-                  <option key={s.id} value={s.id}>{s.name}</option>
-                ))}
-              </select>
-            </label>
-            {supplier?.notes && (
-              <p className="mt-1 text-[11px] font-semibold text-gray-400">{supplier.notes}</p>
+            {suppliersLoading ? (
+              <p className="text-xs font-semibold text-gray-400">Cargando proveedores...</p>
+            ) : activeSuppliers.length === 0 ? (
+              <p className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-700">
+                No hay proveedores activos. Añádelos desde{' '}
+                <strong>Configuración → Proveedores</strong>.
+              </p>
+            ) : (
+              <label className="block">
+                <span className="text-xs font-black text-gray-600">Proveedor</span>
+                <select
+                  value={supplierId}
+                  onChange={(e) => setSupplierId(e.target.value)}
+                  className="mt-1 w-full rounded-xl border bg-white px-3 py-2 text-xs font-semibold outline-none focus:border-amber-500"
+                >
+                  {activeSuppliers.map((s) => (
+                    <option key={s.id} value={s.id}>{s.name}</option>
+                  ))}
+                </select>
+                {supplier?.notes && (
+                  <p className="mt-1 text-[11px] font-semibold text-gray-400">{supplier.notes}</p>
+                )}
+              </label>
             )}
           </div>
 

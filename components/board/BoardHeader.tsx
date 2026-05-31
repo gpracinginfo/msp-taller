@@ -10,6 +10,7 @@ import {
   History,
   Loader2,
   LogOut,
+  Package,
   Plus,
   RefreshCw,
   Search,
@@ -31,6 +32,7 @@ export function BoardHeader({
   onSyncGoogleCalendar,
   onOpenDeliveredHistory,
   onOpenMechanics,
+  onOpenSuppliers,
   onOpenDailySummary,
   onLogout
 }: {
@@ -44,6 +46,7 @@ export function BoardHeader({
   onSyncGoogleCalendar: () => void;
   onOpenDeliveredHistory: () => void;
   onOpenMechanics: () => void;
+  onOpenSuppliers: () => void;
   onOpenDailySummary: () => void;
   onLogout: () => void;
 }) {
@@ -97,7 +100,7 @@ export function BoardHeader({
             Ver Calendar
           </a>
 
-          <SettingsMenu onOpenMechanics={onOpenMechanics} onSyncGoogleCalendar={onSyncGoogleCalendar} />
+          <SettingsMenu onOpenMechanics={onOpenMechanics} onOpenSuppliers={onOpenSuppliers} onSyncGoogleCalendar={onSyncGoogleCalendar} />
 
           <button
             type="button"
@@ -137,7 +140,7 @@ export function BoardHeader({
   );
 }
 
-function SettingsMenu({ onOpenMechanics, onSyncGoogleCalendar }: { onOpenMechanics: () => void; onSyncGoogleCalendar: () => void }) {
+function SettingsMenu({ onOpenMechanics, onOpenSuppliers, onSyncGoogleCalendar }: { onOpenMechanics: () => void; onOpenSuppliers: () => void; onSyncGoogleCalendar: () => void }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -172,6 +175,14 @@ function SettingsMenu({ onOpenMechanics, onSyncGoogleCalendar }: { onOpenMechani
           >
             <Users className="h-4 w-4" />
             Mecánicos
+          </button>
+          <button
+            type="button"
+            className="flex w-full items-center gap-2 border-b px-4 py-3 text-sm font-bold hover:bg-gray-50"
+            onClick={() => { onOpenSuppliers(); setOpen(false); }}
+          >
+            <Package className="h-4 w-4" />
+            Proveedores
           </button>
           <a
             href="/api/google/auth"
