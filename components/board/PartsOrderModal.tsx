@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Copy, ExternalLink, Mail, MessageCircle, PackagePlus, X } from 'lucide-react';
 import type { Job, Supplier } from '@/lib/types';
-import { boards } from './board-config';
 import { Toast } from './Toast';
 import type { ToastMessage } from './Toast';
 
@@ -16,8 +15,6 @@ export function PartsOrderModal({
   suppliersLoading: boolean;
   onClose: () => void;
 }) {
-  const boardName = boards.find((b) => b.id === job.board_id)?.name ?? job.board_id;
-
   const activeSuppliers = useMemo(() => suppliers.filter((s) => s.active), [suppliers]);
 
   const [supplierId, setSupplierId] = useState<string>(() => activeSuppliers[0]?.id ?? '');
@@ -39,21 +36,18 @@ export function PartsOrderModal({
 
   const orderText = useMemo(() => {
     const lines: string[] = [
-      'Pedido de piezas MSP',
+      'Pedido de piezas GP Racing',
       '',
       `Matrícula: ${job.plate || '—'}`,
-      `Vehículo: ${job.vehicle || '—'}`,
+      '',
+      'Piezas solicitadas:',
+      partsText.trim() || '(sin especificar)',
     ];
-    if (job.kilometers) lines.push(`Kilómetros: ${job.kilometers}`);
-    lines.push(`Tablero: ${boardName}`);
-    if (job.mechanic) lines.push(`Mecánico: ${job.mechanic}`);
-    if (job.work_description) lines.push(`Trabajo: ${job.work_description}`);
-    lines.push('', 'Piezas solicitadas:', partsText.trim() || '(sin especificar)');
     if (observations.trim()) {
       lines.push('', 'Observaciones:', observations.trim());
     }
     return lines.join('\n');
-  }, [job, boardName, partsText, observations]);
+  }, [job.plate, partsText, observations]);
 
   async function handleCopy() {
     try {
@@ -99,7 +93,7 @@ export function PartsOrderModal({
                 <h2 className="text-lg font-black">Pedir piezas</h2>
               </div>
               <p className="mt-0.5 text-sm font-semibold text-gray-500">
-                {job.plate || 'Sin matrícula'} · {job.vehicle || 'Sin vehículo'}
+                {job.plate || 'Sin matrícula'}
               </p>
             </div>
             <button
@@ -116,10 +110,8 @@ export function PartsOrderModal({
           <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-3">
             <p className="mb-1.5 text-xs font-black text-amber-800">Datos del vehículo</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs font-semibold text-amber-900">
-              <span><strong>Matrícula:</strong> {job.plate || '—'}</span>
-              <span><strong>Vehículo:</strong> {job.vehicle || '—'}</span>
+              <span className="col-span-2"><strong>Matrícula:</strong> {job.plate || '—'}</span>
               {job.kilometers && <span><strong>Kilómetros:</strong> {job.kilometers}</span>}
-              <span><strong>Tablero:</strong> {boardName}</span>
               {job.mechanic && <span><strong>Mecánico:</strong> {job.mechanic}</span>}
               {job.work_description && (
                 <span className="col-span-2">
