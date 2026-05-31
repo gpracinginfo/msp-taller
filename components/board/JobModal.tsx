@@ -3,6 +3,7 @@ import {
   CalendarDays,
   ClipboardList,
   MessageCircle,
+  PackagePlus,
   Save,
   Trash2,
   X
@@ -13,6 +14,7 @@ import type { BoardInfo } from './board-config';
 import { boards, columns, formatDate, getPriority, priorities, toLocalInput } from './board-config';
 import { DocumentsPanel } from './DocumentsPanel';
 import { JobChat } from './JobChat';
+import { PartsOrderModal } from './PartsOrderModal';
 
 type JobPatch = Partial<Job>;
 
@@ -133,6 +135,7 @@ export function JobModal({
 }) {
   const priority = getPriority(draftSafePriority(job.priority));
   const [draft, setDraft] = useState<JobDraft>(() => createDraft(job));
+  const [showPartsModal, setShowPartsModal] = useState(false);
 
   const currentBoard = boards.find((board) => board.id === draft.board_id) || activeBoard;
 
@@ -270,6 +273,7 @@ export function JobModal({
   }
 
   return (
+    <>
     <div className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-2">
       <div className="max-h-[96vh] w-full max-w-7xl overflow-y-auto rounded-3xl bg-white p-3 shadow-2xl lg:overflow-visible">
         <div className="mb-3 flex flex-col gap-2 border-b pb-3 lg:flex-row lg:items-start lg:justify-between">
@@ -564,6 +568,15 @@ export function JobModal({
               onFile={(type, file) => onUploadFile(job, type, file)}
             />
 
+            <button
+              type="button"
+              onClick={() => setShowPartsModal(true)}
+              className="w-full rounded-xl bg-amber-500 px-3 py-2.5 text-sm font-black text-white hover:bg-amber-600"
+            >
+              <PackagePlus className="mr-1.5 inline h-4 w-4" />
+              Pedir piezas
+            </button>
+
             <div className="rounded-2xl border bg-amber-50 p-3">
               <h4 className="mb-1.5 flex items-center gap-2 text-sm font-black text-amber-800">
                 <ClipboardList className="h-4 w-4" />
@@ -623,6 +636,14 @@ export function JobModal({
         </div>
       </div>
     </div>
+
+    {showPartsModal && (
+      <PartsOrderModal
+        job={previewJob}
+        onClose={() => setShowPartsModal(false)}
+      />
+    )}
+    </>
   );
 }
 
