@@ -157,15 +157,35 @@ export function BoardApp({ userEmail, userRole = 'admin' }: { userEmail?: string
 
     setUserId(authData.user.id);
 
-    const { data, error } = await supabase
-      .from('jobs')
-      .select('*')
-      .order('created_at', { ascending: false });
+    const PAGE_SIZE = 1000;
+    let from = 0;
+    const allJobs: Job[] = [];
+    let fetchError: string | null = null;
 
-    if (error) {
-      showToast(`No se pudieron cargar los trabajos: ${error.message}`, 'error');
+    while (true) {
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
+
+      if (error) {
+        fetchError = error.message;
+        break;
+      }
+
+      const page = (data || []) as Job[];
+      allJobs.push(...page);
+
+      if (page.length < PAGE_SIZE) break;
+
+      from += PAGE_SIZE;
+    }
+
+    if (fetchError) {
+      showToast(`No se pudieron cargar los trabajos: ${fetchError}`, 'error');
     } else {
-      setJobs((data || []) as Job[]);
+      setJobs(allJobs);
     }
 
     setLoading(false);
