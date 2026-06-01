@@ -923,6 +923,7 @@ export function BoardApp({ userEmail, userRole = 'admin' }: { userEmail?: string
       {showDeliveredHistory && (
         <DeliveredHistoryModal
           jobs={deliveredJobs}
+          isConsulta={isConsulta}
           onClose={() => setShowDeliveredHistory(false)}
           onOpenJob={(job) => {
             setSelected(job);

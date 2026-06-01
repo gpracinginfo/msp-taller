@@ -17,10 +17,12 @@ function formatDeliveryDate(job: Job): string {
 
 export function DeliveredHistoryModal({
   jobs,
+  isConsulta,
   onClose,
   onOpenJob
 }: {
   jobs: Job[];
+  isConsulta?: boolean;
   onClose: () => void;
   onOpenJob: (job: Job) => void;
 }) {
@@ -161,7 +163,7 @@ export function DeliveredHistoryModal({
                           </p>
                         )}
 
-                        {job.internal_notes?.trim() && (
+                        {!isConsulta && job.internal_notes?.trim() && (
                           <p className="mt-0.5 text-xs font-semibold text-purple-600">
                             ★ Tiene notas internas
                           </p>
