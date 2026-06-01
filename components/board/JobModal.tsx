@@ -3,6 +3,7 @@ import {
   CalendarDays,
   ClipboardList,
   MessageCircle,
+  PackageCheck,
   PackagePlus,
   Save,
   Trash2,
@@ -581,16 +582,30 @@ export function JobModal({
               Pedir piezas
             </button>
 
-            <div className="rounded-2xl border bg-amber-50 p-3">
-              <h4 className="mb-1.5 flex items-center gap-2 text-sm font-black text-amber-800">
-                <ClipboardList className="h-4 w-4" />
-                Piezas pendientes
-              </h4>
-
-              <p className="max-h-24 overflow-y-auto whitespace-pre-line text-xs font-semibold text-amber-800">
-                {draft.pending_parts || 'No hay piezas pendientes apuntadas.'}
-              </p>
-            </div>
+            {(() => {
+              const hasOrderedParts = draft.pending_parts?.toLowerCase().includes('piezas solicitadas a');
+              return hasOrderedParts ? (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-3">
+                  <h4 className="mb-1.5 flex items-center gap-2 text-sm font-black text-emerald-800">
+                    <PackageCheck className="h-4 w-4" />
+                    Piezas pedidas
+                  </h4>
+                  <p className="max-h-24 overflow-y-auto whitespace-pre-line text-xs font-semibold text-emerald-800">
+                    {draft.pending_parts}
+                  </p>
+                </div>
+              ) : (
+                <div className="rounded-2xl border bg-amber-50 p-3">
+                  <h4 className="mb-1.5 flex items-center gap-2 text-sm font-black text-amber-800">
+                    <ClipboardList className="h-4 w-4" />
+                    Piezas pendientes
+                  </h4>
+                  <p className="max-h-24 overflow-y-auto whitespace-pre-line text-xs font-semibold text-amber-800">
+                    {draft.pending_parts || 'No hay piezas pendientes apuntadas.'}
+                  </p>
+                </div>
+              );
+            })()}
 
             <div className="rounded-2xl border bg-gray-50 p-3">
               <h4 className="mb-1.5 text-sm font-black">Resumen</h4>
