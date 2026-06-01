@@ -1,5 +1,7 @@
 export type BoardId = 'chapa' | 'mecanica';
 
+export type UserRole = 'admin' | 'operario' | 'consulta';
+
 export type JobStatus =
   | 'sin_revisar'
   | 'entrada'

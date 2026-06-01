@@ -20,6 +20,7 @@ export function JobCard({
   activeBoard,
   isDragging,
   messageCount = 0,
+  isReadOnly,
   onOpen,
   onDragStart,
   onDragEnd,
@@ -31,6 +32,7 @@ export function JobCard({
   activeBoard: BoardInfo;
   isDragging: boolean;
   messageCount?: number;
+  isReadOnly?: boolean;
   onOpen: (job: Job) => void;
   onDragStart: (jobId: string) => void;
   onDragEnd: () => void;
@@ -51,8 +53,9 @@ export function JobCard({
 
   return (
     <article
-      draggable
+      draggable={!isReadOnly}
       onDragStart={(e) => {
+        if (isReadOnly) return;
         onDragStart(job.id);
         e.dataTransfer.setData('jobId', job.id);
         e.dataTransfer.effectAllowed = 'move';
@@ -85,14 +88,20 @@ export function JobCard({
 
           <div className="flex shrink-0 flex-col items-end gap-1">
             {isChapa ? (
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onToggleChapaType(job); }}
-                title="Cambiar tipo"
-                className={`rounded-full border px-2 py-0.5 text-[10px] font-black transition hover:opacity-75 ${chapaBadge.className}`}
-              >
-                {chapaBadge.label}
-              </button>
+              isReadOnly ? (
+                <span className={`rounded-full border px-2 py-0.5 text-[10px] font-black ${chapaBadge.className}`}>
+                  {chapaBadge.label}
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); onToggleChapaType(job); }}
+                  title="Cambiar tipo"
+                  className={`rounded-full border px-2 py-0.5 text-[10px] font-black transition hover:opacity-75 ${chapaBadge.className}`}
+                >
+                  {chapaBadge.label}
+                </button>
+              )
             ) : (
               <span className={`rounded-full border px-2 py-0.5 text-[10px] font-black ${activeBoard.className}`}>
                 {activeBoard.short}
@@ -172,25 +181,29 @@ export function JobCard({
         )}
 
         <div className="mt-2 flex gap-1" onClick={(event) => event.stopPropagation()}>
-          <button
-            type="button"
-            className="rounded-lg border bg-white p-1.5 text-xs font-bold hover:bg-gray-100"
-            onClick={() => onMove(job, -1)}
-            title="Mover al estado anterior"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" />
-          </button>
+          {!isReadOnly && (
+            <>
+              <button
+                type="button"
+                className="rounded-lg border bg-white p-1.5 text-xs font-bold hover:bg-gray-100"
+                onClick={() => onMove(job, -1)}
+                title="Mover al estado anterior"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+              </button>
 
-          <button
-            type="button"
-            className="rounded-lg border bg-white p-1.5 text-xs font-bold hover:bg-gray-100"
-            onClick={() => onMove(job, 1)}
-            title="Mover al estado siguiente"
-          >
-            <ArrowRight className="h-3.5 w-3.5" />
-          </button>
+              <button
+                type="button"
+                className="rounded-lg border bg-white p-1.5 text-xs font-bold hover:bg-gray-100"
+                onClick={() => onMove(job, 1)}
+                title="Mover al estado siguiente"
+              >
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+            </>
+          )}
 
-          {hasInternalNotes && (
+          {hasInternalNotes && !isReadOnly && (
             <span
               title="Tiene notas internas"
               aria-label="Tiene notas internas"

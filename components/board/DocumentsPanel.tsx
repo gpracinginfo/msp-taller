@@ -5,10 +5,12 @@ import type { JobFile, UploadFileType } from '@/lib/types';
 export function DocumentsPanel({
   jobId,
   refreshKey,
+  readOnly,
   onFile
 }: {
   jobId: string;
   refreshKey?: number;
+  readOnly?: boolean;
   onFile: (type: UploadFileType, file: File) => void;
 }) {
   const [files, setFiles] = useState<JobFile[]>([]);
@@ -56,15 +58,17 @@ export function DocumentsPanel({
         Documentos
       </h4>
 
-      <div className="grid gap-2">
-        <UploadBox
-          label="Presupuesto"
-          icon={<FileText className="h-4 w-4" />}
-          onFile={(file) => onFile('presupuesto', file)}
-        />
+      {!readOnly && (
+        <div className="grid gap-2">
+          <UploadBox
+            label="Presupuesto"
+            icon={<FileText className="h-4 w-4" />}
+            onFile={(file) => onFile('presupuesto', file)}
+          />
 
-        {/* Albarán piezas oculto en MSP */}
-      </div>
+          {/* Albarán piezas oculto en MSP */}
+        </div>
+      )}
 
       <div className="mt-3 border-t pt-3">
         <p className="mb-2 text-xs font-black text-gray-600">
@@ -99,14 +103,16 @@ export function DocumentsPanel({
                     </a>
                   )}
 
-                  <button
-                    type="button"
-                    onClick={() => deleteFile(file.id)}
-                    className="rounded-lg border border-red-200 bg-red-50 px-2 py-1 text-[11px] font-black text-red-700 hover:bg-red-100"
-                  >
-                    <Trash2 className="mr-1 inline h-3 w-3" />
-                    Eliminar
-                  </button>
+                  {!readOnly && (
+                    <button
+                      type="button"
+                      onClick={() => deleteFile(file.id)}
+                      className="rounded-lg border border-red-200 bg-red-50 px-2 py-1 text-[11px] font-black text-red-700 hover:bg-red-100"
+                    >
+                      <Trash2 className="mr-1 inline h-3 w-3" />
+                      Eliminar
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

@@ -19,10 +19,12 @@ function formatChatTime(dateStr: string): string {
 export function JobChat({
   jobId,
   plate,
+  readOnly,
   onMessageSent
 }: {
   jobId: string;
   plate: string;
+  readOnly?: boolean;
   onMessageSent?: () => void;
 }) {
   const supabase = useMemo(() => createSupabaseBrowser(), []);
@@ -47,6 +49,7 @@ export function JobChat({
   useEffect(() => { loadMessages(); }, [loadMessages]);
 
   async function handleSend() {
+    if (readOnly) return;
     const text = input.trim();
     if (!text || sending) return;
     setSending(true);
@@ -105,33 +108,36 @@ export function JobChat({
           )}
         </div>
 
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
-            }}
-            placeholder="Escribe un comentario..."
-            className="flex-1 rounded-xl border bg-white px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
-          />
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={sending || !input.trim()}
-            className="rounded-xl bg-blue-700 px-3 py-2 text-xs font-black text-white hover:bg-blue-800 disabled:opacity-50"
-            title="Enviar"
-          >
-            <Send className="h-3.5 w-3.5" />
-          </button>
-        </div>
+        {!readOnly && (
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+              }}
+              placeholder="Escribe un comentario..."
+              className="flex-1 rounded-xl border bg-white px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
+            />
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={sending || !input.trim()}
+              className="rounded-xl bg-blue-700 px-3 py-2 text-xs font-black text-white hover:bg-blue-800 disabled:opacity-50"
+              title="Enviar"
+            >
+              <Send className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
       </div>
 
       {showModal && (
         <JobChatModal
           jobId={jobId}
           plate={plate}
+          readOnly={readOnly}
           onClose={() => setShowModal(false)}
           onMessageSent={handleModalMessageSent}
         />

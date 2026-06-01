@@ -18,11 +18,13 @@ function formatChatTime(dateStr: string): string {
 export function JobChatModal({
   jobId,
   plate,
+  readOnly,
   onClose,
   onMessageSent
 }: {
   jobId: string;
   plate: string;
+  readOnly?: boolean;
   onClose: () => void;
   onMessageSent?: () => void;
 }) {
@@ -53,6 +55,7 @@ export function JobChatModal({
   }, [loading, messages]);
 
   async function handleSend() {
+    if (readOnly) return;
     const text = input.trim();
     if (!text || sending) return;
     setSending(true);
@@ -108,27 +111,29 @@ export function JobChatModal({
           <div ref={bottomRef} />
         </div>
 
-        <div className="shrink-0 flex gap-2 border-t px-4 py-3">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
-            }}
-            placeholder="Escribe un comentario interno..."
-            className="flex-1 rounded-xl border bg-white px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
-          />
-          <button
-            type="button"
-            onClick={handleSend}
-            disabled={sending || !input.trim()}
-            className="rounded-xl bg-blue-700 px-3 py-2 text-xs font-black text-white hover:bg-blue-800 disabled:opacity-50"
-            title="Enviar"
-          >
-            <Send className="h-3.5 w-3.5" />
-          </button>
-        </div>
+        {!readOnly && (
+          <div className="shrink-0 flex gap-2 border-t px-4 py-3">
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); }
+              }}
+              placeholder="Escribe un comentario interno..."
+              className="flex-1 rounded-xl border bg-white px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
+            />
+            <button
+              type="button"
+              onClick={handleSend}
+              disabled={sending || !input.trim()}
+              className="rounded-xl bg-blue-700 px-3 py-2 text-xs font-black text-white hover:bg-blue-800 disabled:opacity-50"
+              title="Enviar"
+            >
+              <Send className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

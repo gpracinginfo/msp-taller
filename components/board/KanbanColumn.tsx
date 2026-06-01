@@ -9,6 +9,7 @@ export function KanbanColumn({
   draggingJobId,
   isDragOver,
   messageCountByJobId,
+  isReadOnly,
   onDragOver,
   onDragLeave,
   onDrop,
@@ -26,6 +27,7 @@ export function KanbanColumn({
   draggingJobId: string | null;
   isDragOver: boolean;
   messageCountByJobId: Record<string, number>;
+  isReadOnly?: boolean;
   onDragOver: (status: JobStatus) => void;
   onDragLeave: (status: JobStatus) => void;
   onDrop: (status: JobStatus, jobId: string | null) => void;
@@ -40,11 +42,13 @@ export function KanbanColumn({
   return (
     <section
       onDragOver={(event) => {
+        if (isReadOnly) return;
         event.preventDefault();
         onDragOver(column.id);
       }}
-      onDragLeave={() => onDragLeave(column.id)}
+      onDragLeave={() => { if (!isReadOnly) onDragLeave(column.id); }}
       onDrop={(event) => {
+        if (isReadOnly) return;
         event.preventDefault();
         onDrop(column.id, event.dataTransfer.getData('jobId'));
       }}
@@ -74,6 +78,7 @@ export function KanbanColumn({
             activeBoard={activeBoard}
             isDragging={draggingJobId === job.id}
             messageCount={messageCountByJobId[job.id] || 0}
+            isReadOnly={isReadOnly}
             onOpen={onOpenJob}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}

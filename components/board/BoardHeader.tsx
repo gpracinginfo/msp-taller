@@ -26,6 +26,7 @@ export function BoardHeader({
   activeBoard,
   query,
   saveState,
+  isReadOnly,
   onBoardChange,
   onQueryChange,
   onAddJob,
@@ -40,6 +41,7 @@ export function BoardHeader({
   activeBoard: BoardId;
   query: string;
   saveState: SaveState;
+  isReadOnly?: boolean;
   onBoardChange: (board: BoardId) => void;
   onQueryChange: (query: string) => void;
   onAddJob: () => void;
@@ -90,26 +92,30 @@ export function BoardHeader({
             Historial
           </button>
 
-          <a
-            href="https://calendar.google.com/calendar/u/0/r"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-2xl border bg-white px-4 py-3 text-sm font-bold hover:bg-gray-50"
-          >
-            <ExternalLink className="mr-2 inline h-4 w-4" />
-            Ver Calendar
-          </a>
+          {!isReadOnly && (
+            <>
+              <a
+                href="https://calendar.google.com/calendar/u/0/r"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-2xl border bg-white px-4 py-3 text-sm font-bold hover:bg-gray-50"
+              >
+                <ExternalLink className="mr-2 inline h-4 w-4" />
+                Ver Calendar
+              </a>
 
-          <SettingsMenu onOpenMechanics={onOpenMechanics} onOpenSuppliers={onOpenSuppliers} onSyncGoogleCalendar={onSyncGoogleCalendar} />
+              <SettingsMenu onOpenMechanics={onOpenMechanics} onOpenSuppliers={onOpenSuppliers} onSyncGoogleCalendar={onSyncGoogleCalendar} />
 
-          <button
-            type="button"
-            onClick={onAddJob}
-            className="rounded-2xl bg-blue-700 px-4 py-3 text-sm font-bold text-white hover:bg-blue-800"
-          >
-            <Plus className="mr-2 inline h-4 w-4" />
-            Nuevo coche
-          </button>
+              <button
+                type="button"
+                onClick={onAddJob}
+                className="rounded-2xl bg-blue-700 px-4 py-3 text-sm font-bold text-white hover:bg-blue-800"
+              >
+                <Plus className="mr-2 inline h-4 w-4" />
+                Nuevo coche
+              </button>
+            </>
+          )}
 
           <button
             type="button"

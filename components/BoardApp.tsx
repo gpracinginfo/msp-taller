@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createSupabaseBrowser } from '@/lib/supabase-browser';
-import type { BoardId, Job, JobStatus, UploadFileType } from '@/lib/types';
+import type { BoardId, Job, JobStatus, UploadFileType, UserRole } from '@/lib/types';
 import { JobChatModal } from './board/JobChatModal';
 import type { SaveState } from './board/board-types';
 import type { ToastMessage, ToastTone } from './board/Toast';
@@ -67,7 +67,8 @@ function isPlaceholderValue(value: unknown, placeholder: string) {
   return String(value || '').trim().toLowerCase() === placeholder.toLowerCase();
 }
 
-export function BoardApp({ userEmail }: { userEmail?: string }) {
+export function BoardApp({ userEmail, userRole = 'admin' }: { userEmail?: string; userRole?: UserRole }) {
+  const isReadOnly = userRole === 'consulta';
   const supabase = useMemo(() => createSupabaseBrowser(), []);
 
   const [userId, setUserId] = useState<string | null>(null);
@@ -447,6 +448,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   }, [getPendingPartsPatch, mergeJob]);
 
   const saveJobDraft = useCallback(async (job: Job, draft: JobPatch) => {
+    if (isReadOnly) return null;
     const cleanPlate = String(draft.plate || job.plate || '').toUpperCase().trim();
     const plateNormalized = normalizePlate(cleanPlate);
 
@@ -503,6 +505,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   }, [findClientByPlate, showToast, updateJobAndClient]);
 
   const addJob = useCallback(async () => {
+    if (isReadOnly) return;
     let currentUserId = userId;
 
     if (!currentUserId) {
@@ -554,6 +557,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   }, [activeBoard, showToast, supabase, userId]);
 
   const deleteJob = useCallback(async (job: Job) => {
+    if (isReadOnly) return;
     const ok = window.confirm(`¿Eliminar ${job.plate || 'Sin matrícula'} - ${job.vehicle || 'Sin vehículo'}?`);
 
     if (!ok) return;
@@ -571,6 +575,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   }, [showToast, supabase]);
 
   const moveJobToStatus = useCallback(async (jobId: string, status: JobStatus) => {
+    if (isReadOnly) return;
     const job = jobsRef.current.find((item) => item.id === jobId);
 
     if (!job || job.status === status) return;
@@ -579,6 +584,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   }, [updateJob]);
 
   const moveJob = useCallback(async (job: Job, direction: number) => {
+    if (isReadOnly) return;
     const visibleColumns = columns.filter((column) => column.id !== 'entrega');
     const index = visibleColumns.findIndex((column) => column.id === job.status);
 
@@ -590,6 +596,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   }, [updateJob]);
 
   const toggleChapaType = useCallback(async (job: Job) => {
+    if (isReadOnly) return;
     const current = job.chapa_type;
     const next = (!current || current === 'chapa')
       ? 'particular'
@@ -600,6 +607,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   }, [updateJob]);
 
   const syncCalendar = useCallback(async (job: Job) => {
+    if (isReadOnly) return;
     if (!job.appointment_start || !job.appointment_end) {
       showToast('Antes de crear la cita, rellena inicio y fin de cita.', 'error');
       return;
@@ -670,6 +678,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   }, [loadJobs, setTransientSaveState, showToast]);
 
   const sendAppointmentWhatsapp = useCallback((job: Job) => {
+    if (isReadOnly) return;
     if (!job.appointment_start) {
       showToast('Primero rellena la cita.', 'error');
       return;
@@ -706,6 +715,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
   }, [showToast]);
 
   const uploadFile = useCallback(async (job: Job, type: UploadFileType, file: File) => {
+    if (isReadOnly) return;
     const form = new FormData();
 
     form.append('jobId', job.id);
@@ -770,6 +780,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
         activeBoard={activeBoard}
         query={query}
         saveState={saveState}
+        isReadOnly={isReadOnly}
         onBoardChange={setActiveBoard}
         onQueryChange={setQuery}
         onAddJob={addJob}
@@ -794,6 +805,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
           draggingJobId={draggingJobId}
           dragOverStatus={dragOverStatus}
           messageCountByJobId={messageCountByJobId}
+          isReadOnly={isReadOnly}
           onDragOver={setDragOverStatus}
           onDragLeave={(status) => {
             setDragOverStatus((current) => (current === status ? null : current));
@@ -865,6 +877,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
           mechanics={mechanics}
           suppliers={suppliers}
           suppliersLoading={suppliersLoading}
+          isReadOnly={isReadOnly}
           onClose={() => setSelected(null)}
           onSaveJob={saveJobDraft}
           onApplyPlateAndFindClient={applyPlateAndFindClient}
@@ -947,6 +960,7 @@ export function BoardApp({ userEmail }: { userEmail?: string }) {
         <JobChatModal
           jobId={chatJob.id}
           plate={chatJob.plate}
+          readOnly={isReadOnly}
           onClose={() => setChatJob(null)}
           onMessageSent={() => incrementChatCount(chatJob.id)}
         />

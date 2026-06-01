@@ -112,6 +112,7 @@ export function JobModal({
   mechanics,
   suppliers,
   suppliersLoading,
+  isReadOnly,
   onClose,
   onSaveJob,
   onApplyPlateAndFindClient,
@@ -128,6 +129,7 @@ export function JobModal({
   mechanics: Mechanic[];
   suppliers: Supplier[];
   suppliersLoading: boolean;
+  isReadOnly?: boolean;
   onClose: () => void;
   onSaveJob: (job: Job, patch: JobPatch) => Promise<Job | null>;
   onApplyPlateAndFindClient: (job: Job, plate: string) => Promise<Job | null>;
@@ -213,6 +215,7 @@ export function JobModal({
   }
 
   async function handleSave() {
+    if (isReadOnly) return;
     let appointmentEnd = draft.appointment_end;
 
     if (draft.appointment_start && !appointmentEnd) {
@@ -255,6 +258,7 @@ export function JobModal({
   }
 
   async function handlePlateBlur() {
+    if (isReadOnly) return;
     const cleanPlate = draft.plate.toUpperCase().trim();
 
     if (!cleanPlate) return;
@@ -321,32 +325,36 @@ export function JobModal({
           </div>
 
           <div className="flex flex-wrap gap-1.5">
-            <button
-              type="button"
-              onClick={handleSave}
-              className="rounded-xl bg-blue-700 px-3 py-2 text-xs font-black text-white hover:bg-blue-800"
-            >
-              <Save className="mr-1 inline h-4 w-4" />
-              Guardar
-            </button>
+            {!isReadOnly && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleSave}
+                  className="rounded-xl bg-blue-700 px-3 py-2 text-xs font-black text-white hover:bg-blue-800"
+                >
+                  <Save className="mr-1 inline h-4 w-4" />
+                  Guardar
+                </button>
 
-            <button
-              type="button"
-              onClick={() => onSyncCalendar(previewJob)}
-              className="rounded-xl bg-green-700 px-3 py-2 text-xs font-black text-white hover:bg-green-800"
-            >
-              <CalendarDays className="mr-1 inline h-4 w-4" />
-              Calendar
-            </button>
+                <button
+                  type="button"
+                  onClick={() => onSyncCalendar(previewJob)}
+                  className="rounded-xl bg-green-700 px-3 py-2 text-xs font-black text-white hover:bg-green-800"
+                >
+                  <CalendarDays className="mr-1 inline h-4 w-4" />
+                  Calendar
+                </button>
 
-            <button
-              type="button"
-              onClick={() => onSendAppointmentWhatsapp(previewJob)}
-              className="rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white hover:bg-emerald-700"
-            >
-              <MessageCircle className="mr-1 inline h-4 w-4" />
-              WhatsApp cita
-            </button>
+                <button
+                  type="button"
+                  onClick={() => onSendAppointmentWhatsapp(previewJob)}
+                  className="rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white hover:bg-emerald-700"
+                >
+                  <MessageCircle className="mr-1 inline h-4 w-4" />
+                  WhatsApp cita
+                </button>
+              </>
+            )}
 
             <button
               type="button"
@@ -370,6 +378,7 @@ export function JobModal({
                   label: board.name
                 }))}
                 onChange={(value) => updateDraft('board_id', value as BoardId)}
+                disabled={isReadOnly}
               />
 
               <Field
@@ -378,6 +387,7 @@ export function JobModal({
                 placeholder="Matrícula"
                 onBlur={handlePlateBlur}
                 onChange={(value) => updateDraft('plate', value.toUpperCase())}
+                readOnly={isReadOnly}
               />
 
               <Field
@@ -385,6 +395,7 @@ export function JobModal({
                 value={draft.vehicle}
                 placeholder="Vehículo"
                 onChange={(value) => updateDraft('vehicle', value)}
+                readOnly={isReadOnly}
               />
 
               <Field
@@ -392,6 +403,7 @@ export function JobModal({
                 value={draft.invoice_number}
                 placeholder="Nº factura"
                 onChange={(value) => updateDraft('invoice_number', value)}
+                readOnly={isReadOnly}
               />
 
               <Field
@@ -399,12 +411,14 @@ export function JobModal({
                 value={draft.kilometers}
                 placeholder="Ej. 123.456"
                 onChange={(value) => updateDraft('kilometers', value)}
+                readOnly={isReadOnly}
               />
 
               <MechanicField
                 value={draft.mechanic}
                 mechanics={mechanics}
                 onChange={(value) => updateDraft('mechanic', value)}
+                disabled={isReadOnly}
               />
 
               <SelectField
@@ -415,6 +429,7 @@ export function JobModal({
                   label: column.title
                 }))}
                 onChange={(value) => updateDraft('status', value as JobStatus)}
+                disabled={isReadOnly}
               />
 
               <SelectField
@@ -425,6 +440,7 @@ export function JobModal({
                   label: item.name
                 }))}
                 onChange={(value) => updateDraft('priority', value as JobPriority)}
+                disabled={isReadOnly}
               />
 
               <Field
@@ -432,6 +448,7 @@ export function JobModal({
                 type="datetime-local"
                 value={draft.appointment_start}
                 onChange={handleStartChange}
+                readOnly={isReadOnly}
               />
 
               <Field
@@ -439,6 +456,7 @@ export function JobModal({
                 type="datetime-local"
                 value={draft.appointment_end}
                 onChange={(value) => updateDraft('appointment_end', value)}
+                readOnly={isReadOnly}
               />
 
               <Field
@@ -446,6 +464,7 @@ export function JobModal({
                 type="date"
                 value={draft.entry_date}
                 onChange={(value) => updateDraft('entry_date', value)}
+                readOnly={isReadOnly}
               />
 
               <Field
@@ -453,6 +472,7 @@ export function JobModal({
                 value={draft.key_number}
                 placeholder="Nº de llave"
                 onChange={(value) => updateDraft('key_number', value)}
+                readOnly={isReadOnly}
               />
 
               {draft.board_id === 'chapa' && (
@@ -484,103 +504,115 @@ export function JobModal({
             </div>
 
             {/* Fila 1: Trabajo visible | Piezas | Notas */}
-            <div className="mt-3 grid gap-2 lg:grid-cols-3">
+            <div className={`mt-3 grid gap-2 ${isReadOnly ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}>
               <WorkDescriptionField
                 value={draft.work_description}
                 onChange={(value) => updateDraft('work_description', value)}
+                readOnly={isReadOnly}
               />
 
               <TextField
                 label="Piezas pendientes"
-                helper="Al guardar, se moverá a Esperando piezas."
+                helper={isReadOnly ? undefined : 'Al guardar, se moverá a Esperando piezas.'}
                 value={draft.pending_parts}
                 rows={4}
                 onChange={(value) => {
                   updateDraft('pending_parts', value);
                   onDraftPendingParts(job, value);
                 }}
+                readOnly={isReadOnly}
               />
 
-              <TextField
-                label="Notas internas privadas"
-                helper="Esto NO se envía a Google Calendar."
-                value={draft.internal_notes}
-                rows={4}
-                onChange={(value) => updateDraft('internal_notes', value)}
-              />
+              {!isReadOnly && (
+                <TextField
+                  label="Notas internas privadas"
+                  helper="Esto NO se envía a Google Calendar."
+                  value={draft.internal_notes}
+                  rows={4}
+                  onChange={(value) => updateDraft('internal_notes', value)}
+                />
+              )}
             </div>
 
             {/* Fila 2: Acciones rápidas | Chat | FANE/DAVID */}
-            <div className="mt-3 grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)_140px]">
-              <div>
-                <p className="mb-1.5 text-xs font-black text-gray-600">Acciones rápidas</p>
-                <WorkPresets
-                  value={draft.work_description}
-                  onChange={(value) => updateDraft('work_description', value)}
-                />
-              </div>
+            <div className={`mt-3 grid gap-3 ${isReadOnly ? '' : 'lg:grid-cols-[280px_minmax(0,1fr)_140px]'}`}>
+              {!isReadOnly && (
+                <div>
+                  <p className="mb-1.5 text-xs font-black text-gray-600">Acciones rápidas</p>
+                  <WorkPresets
+                    value={draft.work_description}
+                    onChange={(value) => updateDraft('work_description', value)}
+                  />
+                </div>
+              )}
 
               <JobChat
                 jobId={job.id}
                 plate={draft.plate}
+                readOnly={isReadOnly}
                 onMessageSent={() => onChatMessageSent?.(job.id)}
               />
 
-              <div className="flex flex-col gap-3 pt-1">
-                <div className="flex flex-col items-start gap-1">
-                  {draft.fane && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src="/fane-stamp.webp" alt="FANE" className="w-20 opacity-90" />
-                  )}
-                  <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition ${draft.fane ? 'border-orange-400 bg-orange-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
-                    <input
-                      type="checkbox"
-                      checked={draft.fane}
-                      onChange={(event) => updateDraft('fane', event.target.checked)}
-                      className="h-4 w-4 accent-orange-500"
-                    />
-                    <span className={`text-xs font-black ${draft.fane ? 'text-orange-800' : 'text-gray-600'}`}>
-                      FANE
-                    </span>
-                  </label>
-                </div>
+              {!isReadOnly && (
+                <div className="flex flex-col gap-3 pt-1">
+                  <div className="flex flex-col items-start gap-1">
+                    {draft.fane && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src="/fane-stamp.webp" alt="FANE" className="w-20 opacity-90" />
+                    )}
+                    <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition ${draft.fane ? 'border-orange-400 bg-orange-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
+                      <input
+                        type="checkbox"
+                        checked={draft.fane}
+                        onChange={(event) => updateDraft('fane', event.target.checked)}
+                        className="h-4 w-4 accent-orange-500"
+                      />
+                      <span className={`text-xs font-black ${draft.fane ? 'text-orange-800' : 'text-gray-600'}`}>
+                        FANE
+                      </span>
+                    </label>
+                  </div>
 
-                <div className="flex flex-col items-start gap-1">
-                  {draft.david && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src="/david-stamp.webp" alt="DAVID" className="w-20 opacity-90" />
-                  )}
-                  <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition ${draft.david ? 'border-fuchsia-400 bg-fuchsia-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
-                    <input
-                      type="checkbox"
-                      checked={draft.david}
-                      onChange={(event) => updateDraft('david', event.target.checked)}
-                      className="h-4 w-4 accent-fuchsia-600"
-                    />
-                    <span className={`text-xs font-black ${draft.david ? 'text-fuchsia-800' : 'text-gray-600'}`}>
-                      DAVID
-                    </span>
-                  </label>
+                  <div className="flex flex-col items-start gap-1">
+                    {draft.david && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src="/david-stamp.webp" alt="DAVID" className="w-20 opacity-90" />
+                    )}
+                    <label className={`inline-flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 transition ${draft.david ? 'border-fuchsia-400 bg-fuchsia-50' : 'border-gray-200 bg-white hover:bg-gray-50'}`}>
+                      <input
+                        type="checkbox"
+                        checked={draft.david}
+                        onChange={(event) => updateDraft('david', event.target.checked)}
+                        className="h-4 w-4 accent-fuchsia-600"
+                      />
+                      <span className={`text-xs font-black ${draft.david ? 'text-fuchsia-800' : 'text-gray-600'}`}>
+                        DAVID
+                      </span>
+                    </label>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
           <aside className="grid gap-2 md:grid-cols-3 xl:grid-cols-1">
             <DocumentsPanel
-  	      jobId={job.id}
+              jobId={job.id}
               refreshKey={job.updated_at ? new Date(job.updated_at).getTime() : undefined}
+              readOnly={isReadOnly}
               onFile={(type, file) => onUploadFile(job, type, file)}
             />
 
-            <button
-              type="button"
-              onClick={() => setShowPartsModal(true)}
-              className="w-full rounded-xl bg-amber-500 px-3 py-2.5 text-sm font-black text-white hover:bg-amber-600"
-            >
-              <PackagePlus className="mr-1.5 inline h-4 w-4" />
-              Pedir piezas
-            </button>
+            {!isReadOnly && (
+              <button
+                type="button"
+                onClick={() => setShowPartsModal(true)}
+                className="w-full rounded-xl bg-amber-500 px-3 py-2.5 text-sm font-black text-white hover:bg-amber-600"
+              >
+                <PackagePlus className="mr-1.5 inline h-4 w-4" />
+                Pedir piezas
+              </button>
+            )}
 
             {(() => {
               const hasOrderedParts = draft.pending_parts?.toLowerCase().includes('piezas solicitadas a');
@@ -642,14 +674,16 @@ export function JobModal({
                 </p>
               )}
 
-              <button
-                type="button"
-                onClick={() => onDeleteJob(job)}
-                className="mt-3 w-full rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-black text-red-700 hover:bg-red-100"
-              >
-                <Trash2 className="mr-1 inline h-4 w-4" />
-                Eliminar vehículo
-              </button>
+              {!isReadOnly && (
+                <button
+                  type="button"
+                  onClick={() => onDeleteJob(job)}
+                  className="mt-3 w-full rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-black text-red-700 hover:bg-red-100"
+                >
+                  <Trash2 className="mr-1 inline h-4 w-4" />
+                  Eliminar vehículo
+                </button>
+              )}
             </div>
           </aside>
         </div>
@@ -686,11 +720,13 @@ export function JobModal({
 function MechanicField({
   value,
   mechanics,
-  onChange
+  onChange,
+  disabled
 }: {
   value: string;
   mechanics: Mechanic[];
   onChange: (value: string) => void;
+  disabled?: boolean;
 }) {
   const nameInList = mechanics.some((m) => m.name === value);
   const showStale = value !== '' && !nameInList;
@@ -702,7 +738,8 @@ function MechanicField({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-1 w-full rounded-xl border bg-white px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
+        disabled={disabled}
+        className={`mt-1 w-full rounded-xl border px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600 ${disabled ? 'bg-gray-50 text-gray-700' : 'bg-white'}`}
       >
         <option value="">Sin asignar</option>
         {showStale && (
@@ -722,7 +759,8 @@ function Field({
   onChange,
   onBlur,
   placeholder,
-  type = 'text'
+  type = 'text',
+  readOnly
 }: {
   label: string;
   value: string;
@@ -730,6 +768,7 @@ function Field({
   onBlur?: () => void;
   placeholder?: string;
   type?: string;
+  readOnly?: boolean;
 }) {
   return (
     <label className="block">
@@ -741,7 +780,8 @@ function Field({
         placeholder={placeholder}
         onChange={(event) => onChange(event.target.value)}
         onBlur={onBlur}
-        className="mt-1 w-full rounded-xl border px-3 py-2 text-xs font-semibold outline-none placeholder:text-gray-400 focus:border-blue-600"
+        readOnly={readOnly}
+        className={`mt-1 w-full rounded-xl border px-3 py-2 text-xs font-semibold outline-none placeholder:text-gray-400 focus:border-blue-600 ${readOnly ? 'bg-gray-50 text-gray-700' : ''}`}
       />
     </label>
   );
@@ -751,12 +791,14 @@ function SelectField({
   label,
   value,
   options,
-  onChange
+  onChange,
+  disabled
 }: {
   label: string;
   value: string;
   options: { value: string; label: string }[];
   onChange: (value: string) => void;
+  disabled?: boolean;
 }) {
   return (
     <label className="block">
@@ -765,7 +807,8 @@ function SelectField({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-1 w-full rounded-xl border bg-white px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
+        disabled={disabled}
+        className={`mt-1 w-full rounded-xl border px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600 ${disabled ? 'bg-gray-50 text-gray-700' : 'bg-white'}`}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -782,13 +825,15 @@ function TextField({
   helper,
   value,
   rows = 4,
-  onChange
+  onChange,
+  readOnly
 }: {
   label: string;
   helper?: string;
   value: string;
   rows?: number;
   onChange: (value: string) => void;
+  readOnly?: boolean;
 }) {
   return (
     <label className="block">
@@ -800,7 +845,8 @@ function TextField({
         rows={rows}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="mt-1 w-full resize-none rounded-xl border px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
+        readOnly={readOnly}
+        className={`mt-1 w-full resize-none rounded-xl border px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600 ${readOnly ? 'bg-gray-50 text-gray-700' : ''}`}
       />
     </label>
   );
@@ -808,27 +854,32 @@ function TextField({
 
 function WorkDescriptionField({
   value,
-  onChange
+  onChange,
+  readOnly
 }: {
   value: string;
   onChange: (value: string) => void;
+  readOnly?: boolean;
 }) {
   return (
     <div className="block">
       <span className="text-xs font-black text-gray-600">
-        Trabajo visible para Google Calendar
+        Trabajo visible
       </span>
 
-      <p className="mt-0.5 text-[11px] font-semibold text-gray-400">
-        Esto sí se enviará a Calendar.
-      </p>
+      {!readOnly && (
+        <p className="mt-0.5 text-[11px] font-semibold text-gray-400">
+          Esto sí se enviará a Calendar.
+        </p>
+      )}
 
       <textarea
         rows={4}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        placeholder="Escribe el trabajo o marca una opción rápida..."
-        className="mt-1 w-full resize-none rounded-xl border px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600"
+        readOnly={readOnly}
+        placeholder={readOnly ? '' : 'Escribe el trabajo o marca una opción rápida...'}
+        className={`mt-1 w-full resize-none rounded-xl border px-3 py-2 text-xs font-semibold outline-none focus:border-blue-600 ${readOnly ? 'bg-gray-50 text-gray-700' : ''}`}
       />
     </div>
   );
