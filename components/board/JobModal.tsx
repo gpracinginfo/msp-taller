@@ -112,9 +112,10 @@ export function JobModal({
   mechanics,
   suppliers,
   suppliersLoading,
-  isReadOnly,
+  isConsulta,
   onClose,
   onSaveJob,
+  onSaveStatus,
   onApplyPlateAndFindClient,
   onSyncCalendar,
   onSendAppointmentWhatsapp,
@@ -129,9 +130,10 @@ export function JobModal({
   mechanics: Mechanic[];
   suppliers: Supplier[];
   suppliersLoading: boolean;
-  isReadOnly?: boolean;
+  isConsulta?: boolean;
   onClose: () => void;
   onSaveJob: (job: Job, patch: JobPatch) => Promise<Job | null>;
+  onSaveStatus: (job: Job, status: JobStatus) => Promise<Job | null>;
   onApplyPlateAndFindClient: (job: Job, plate: string) => Promise<Job | null>;
   onSyncCalendar: (job: Job) => void;
   onSendAppointmentWhatsapp: (job: Job) => void;
@@ -214,8 +216,13 @@ export function JobModal({
     }));
   }
 
+  async function handleSaveStatus() {
+    const updated = await onSaveStatus(job, draft.status);
+    if (updated) setDraft(createDraft(updated));
+  }
+
   async function handleSave() {
-    if (isReadOnly) return;
+    if (isConsulta) return;
     let appointmentEnd = draft.appointment_end;
 
     if (draft.appointment_start && !appointmentEnd) {
@@ -258,7 +265,7 @@ export function JobModal({
   }
 
   async function handlePlateBlur() {
-    if (isReadOnly) return;
+    if (isConsulta) return;
     const cleanPlate = draft.plate.toUpperCase().trim();
 
     if (!cleanPlate) return;
@@ -325,7 +332,16 @@ export function JobModal({
           </div>
 
           <div className="flex flex-wrap gap-1.5">
-            {!isReadOnly && (
+            {isConsulta ? (
+              <button
+                type="button"
+                onClick={handleSaveStatus}
+                className="rounded-xl bg-blue-700 px-3 py-2 text-xs font-black text-white hover:bg-blue-800"
+              >
+                <Save className="mr-1 inline h-4 w-4" />
+                Guardar estado
+              </button>
+            ) : (
               <>
                 <button
                   type="button"
@@ -378,7 +394,7 @@ export function JobModal({
                   label: board.name
                 }))}
                 onChange={(value) => updateDraft('board_id', value as BoardId)}
-                disabled={isReadOnly}
+                disabled={isConsulta}
               />
 
               <Field
@@ -387,7 +403,7 @@ export function JobModal({
                 placeholder="Matrícula"
                 onBlur={handlePlateBlur}
                 onChange={(value) => updateDraft('plate', value.toUpperCase())}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
               <Field
@@ -395,7 +411,7 @@ export function JobModal({
                 value={draft.vehicle}
                 placeholder="Vehículo"
                 onChange={(value) => updateDraft('vehicle', value)}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
               <Field
@@ -403,7 +419,7 @@ export function JobModal({
                 value={draft.invoice_number}
                 placeholder="Nº factura"
                 onChange={(value) => updateDraft('invoice_number', value)}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
               <Field
@@ -411,14 +427,14 @@ export function JobModal({
                 value={draft.kilometers}
                 placeholder="Ej. 123.456"
                 onChange={(value) => updateDraft('kilometers', value)}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
               <MechanicField
                 value={draft.mechanic}
                 mechanics={mechanics}
                 onChange={(value) => updateDraft('mechanic', value)}
-                disabled={isReadOnly}
+                disabled={isConsulta}
               />
 
               <SelectField
@@ -429,7 +445,6 @@ export function JobModal({
                   label: column.title
                 }))}
                 onChange={(value) => updateDraft('status', value as JobStatus)}
-                disabled={isReadOnly}
               />
 
               <SelectField
@@ -440,7 +455,7 @@ export function JobModal({
                   label: item.name
                 }))}
                 onChange={(value) => updateDraft('priority', value as JobPriority)}
-                disabled={isReadOnly}
+                disabled={isConsulta}
               />
 
               <Field
@@ -448,7 +463,7 @@ export function JobModal({
                 type="datetime-local"
                 value={draft.appointment_start}
                 onChange={handleStartChange}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
               <Field
@@ -456,7 +471,7 @@ export function JobModal({
                 type="datetime-local"
                 value={draft.appointment_end}
                 onChange={(value) => updateDraft('appointment_end', value)}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
               <Field
@@ -464,7 +479,7 @@ export function JobModal({
                 type="date"
                 value={draft.entry_date}
                 onChange={(value) => updateDraft('entry_date', value)}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
               <Field
@@ -472,7 +487,7 @@ export function JobModal({
                 value={draft.key_number}
                 placeholder="Nº de llave"
                 onChange={(value) => updateDraft('key_number', value)}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
               {draft.board_id === 'chapa' && (
@@ -487,7 +502,14 @@ export function JobModal({
                           : type === 'particular' ? 'border-rose-400 bg-rose-100 text-rose-800'
                           :                        'border-green-400 bg-green-100 text-green-800'
                         : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50';
-                      return (
+                      return isConsulta ? (
+                        <span
+                          key={type}
+                          className={`rounded-lg border px-2 py-1 text-xs font-black ${colorClass}`}
+                        >
+                          {type === 'chapa' ? 'CHAPA' : type === 'particular' ? 'PARTICULAR' : 'VTC'}
+                        </span>
+                      ) : (
                         <button
                           key={type}
                           type="button"
@@ -504,26 +526,26 @@ export function JobModal({
             </div>
 
             {/* Fila 1: Trabajo visible | Piezas | Notas */}
-            <div className={`mt-3 grid gap-2 ${isReadOnly ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}>
+            <div className={`mt-3 grid gap-2 ${isConsulta ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}>
               <WorkDescriptionField
                 value={draft.work_description}
                 onChange={(value) => updateDraft('work_description', value)}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
               <TextField
                 label="Piezas pendientes"
-                helper={isReadOnly ? undefined : 'Al guardar, se moverá a Esperando piezas.'}
+                helper={isConsulta ? undefined : 'Al guardar, se moverá a Esperando piezas.'}
                 value={draft.pending_parts}
                 rows={4}
                 onChange={(value) => {
                   updateDraft('pending_parts', value);
                   onDraftPendingParts(job, value);
                 }}
-                readOnly={isReadOnly}
+                readOnly={isConsulta}
               />
 
-              {!isReadOnly && (
+              {!isConsulta && (
                 <TextField
                   label="Notas internas privadas"
                   helper="Esto NO se envía a Google Calendar."
@@ -535,8 +557,8 @@ export function JobModal({
             </div>
 
             {/* Fila 2: Acciones rápidas | Chat | FANE/DAVID */}
-            <div className={`mt-3 grid gap-3 ${isReadOnly ? '' : 'lg:grid-cols-[280px_minmax(0,1fr)_140px]'}`}>
-              {!isReadOnly && (
+            <div className={`mt-3 grid gap-3 ${isConsulta ? '' : 'lg:grid-cols-[280px_minmax(0,1fr)_140px]'}`}>
+              {!isConsulta && (
                 <div>
                   <p className="mb-1.5 text-xs font-black text-gray-600">Acciones rápidas</p>
                   <WorkPresets
@@ -549,11 +571,10 @@ export function JobModal({
               <JobChat
                 jobId={job.id}
                 plate={draft.plate}
-                readOnly={isReadOnly}
                 onMessageSent={() => onChatMessageSent?.(job.id)}
               />
 
-              {!isReadOnly && (
+              {!isConsulta && (
                 <div className="flex flex-col gap-3 pt-1">
                   <div className="flex flex-col items-start gap-1">
                     {draft.fane && (
@@ -599,11 +620,11 @@ export function JobModal({
             <DocumentsPanel
               jobId={job.id}
               refreshKey={job.updated_at ? new Date(job.updated_at).getTime() : undefined}
-              readOnly={isReadOnly}
+              readOnly={isConsulta}
               onFile={(type, file) => onUploadFile(job, type, file)}
             />
 
-            {!isReadOnly && (
+            {!isConsulta && (
               <button
                 type="button"
                 onClick={() => setShowPartsModal(true)}
@@ -674,7 +695,7 @@ export function JobModal({
                 </p>
               )}
 
-              {!isReadOnly && (
+              {!isConsulta && (
                 <button
                   type="button"
                   onClick={() => onDeleteJob(job)}

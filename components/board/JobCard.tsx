@@ -181,27 +181,23 @@ export function JobCard({
         )}
 
         <div className="mt-2 flex gap-1" onClick={(event) => event.stopPropagation()}>
-          {!isReadOnly && (
-            <>
-              <button
-                type="button"
-                className="rounded-lg border bg-white p-1.5 text-xs font-bold hover:bg-gray-100"
-                onClick={() => onMove(job, -1)}
-                title="Mover al estado anterior"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" />
-              </button>
+          <button
+            type="button"
+            className="rounded-lg border bg-white p-1.5 text-xs font-bold hover:bg-gray-100"
+            onClick={() => onMove(job, -1)}
+            title="Mover al estado anterior"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+          </button>
 
-              <button
-                type="button"
-                className="rounded-lg border bg-white p-1.5 text-xs font-bold hover:bg-gray-100"
-                onClick={() => onMove(job, 1)}
-                title="Mover al estado siguiente"
-              >
-                <ArrowRight className="h-3.5 w-3.5" />
-              </button>
-            </>
-          )}
+          <button
+            type="button"
+            className="rounded-lg border bg-white p-1.5 text-xs font-bold hover:bg-gray-100"
+            onClick={() => onMove(job, 1)}
+            title="Mover al estado siguiente"
+          >
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
 
           {hasInternalNotes && !isReadOnly && (
             <span
