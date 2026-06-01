@@ -302,14 +302,15 @@ export function BoardApp({ userEmail, userRole = 'admin' }: { userEmail?: string
 
   const boardStats = useMemo(() => {
     const boardJobs = jobs.filter((job) => job.board_id === activeBoard);
+    const activeBoardJobs = boardJobs.filter((job) => job.status !== 'entrega');
 
     return {
-      total: boardJobs.length,
-      active: boardJobs.filter((job) => job.status !== 'entrega').length,
-      piezas: boardJobs.filter((job) => job.status === 'piezas' || hasPendingParts(job)).length,
+      total: activeBoardJobs.length,
+      active: activeBoardJobs.length,
+      piezas: activeBoardJobs.filter((job) => job.status === 'piezas' || hasPendingParts(job)).length,
       entrega: boardJobs.filter((job) => job.status === 'entrega').length,
-      citas: boardJobs.filter((job) => job.appointment_start).length,
-      noAppointment: boardJobs.filter((job) => !job.appointment_start && job.status !== 'entrega').length
+      citas: activeBoardJobs.filter((job) => !!job.appointment_start).length,
+      noAppointment: activeBoardJobs.filter((job) => !job.appointment_start).length
     };
   }, [activeBoard, jobs]);
 
