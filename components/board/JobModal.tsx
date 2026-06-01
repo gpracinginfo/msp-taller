@@ -647,6 +647,23 @@ export function JobModal({
         suppliers={suppliers}
         suppliersLoading={suppliersLoading}
         onClose={() => setShowPartsModal(false)}
+        onMarkAsOrdered={(text) => {
+          setDraft((current) => {
+            const existing = current.pending_parts.trim();
+            const incoming = text.trim();
+            let merged: string;
+            if (!existing) {
+              merged = incoming;
+            } else if (existing.includes(incoming)) {
+              merged = existing;
+            } else {
+              merged = `${existing}\n\n${incoming}`;
+            }
+            onDraftPendingParts(job, merged);
+            return { ...current, pending_parts: merged };
+          });
+          setShowPartsModal(false);
+        }}
       />
     )}
     </>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Copy, ExternalLink, Mail, MessageCircle, PackagePlus, X } from 'lucide-react';
+import { CheckCircle, Copy, ExternalLink, Mail, MessageCircle, PackagePlus, X } from 'lucide-react';
 import type { Job, Supplier } from '@/lib/types';
 import { Toast } from './Toast';
 import type { ToastMessage } from './Toast';
@@ -8,12 +8,14 @@ export function PartsOrderModal({
   job,
   suppliers,
   suppliersLoading,
-  onClose
+  onClose,
+  onMarkAsOrdered
 }: {
   job: Job;
   suppliers: Supplier[];
   suppliersLoading: boolean;
   onClose: () => void;
+  onMarkAsOrdered?: (text: string) => void;
 }) {
   const activeSuppliers = useMemo(() => suppliers.filter((s) => s.active), [suppliers]);
 
@@ -35,19 +37,21 @@ export function PartsOrderModal({
   const supplier = activeSuppliers.find((s) => s.id === supplierId) ?? null;
 
   const orderText = useMemo(() => {
+    const supplierName = supplier?.name ?? 'proveedor';
     const lines: string[] = [
-      'Pedido de piezas GP Racing',
+      `Piezas solicitadas a ${supplierName}:`,
       '',
-      `Matrícula: ${job.plate || '—'}`,
-      '',
-      'Piezas solicitadas:',
       partsText.trim() || '(sin especificar)',
     ];
     if (observations.trim()) {
       lines.push('', 'Observaciones:', observations.trim());
     }
     return lines.join('\n');
-  }, [job.plate, partsText, observations]);
+  }, [supplier, partsText, observations]);
+
+  function handleMarkAsOrdered() {
+    onMarkAsOrdered?.(orderText);
+  }
 
   async function handleCopy() {
     try {
@@ -186,15 +190,26 @@ export function PartsOrderModal({
           </div>
 
           {/* Order preview */}
-          <div className="mb-4 rounded-2xl border bg-gray-50 p-3">
-            <p className="mb-1.5 text-xs font-black text-gray-600">Vista previa del pedido</p>
-            <pre className="whitespace-pre-wrap break-words text-xs font-semibold text-gray-700">
+          <div className="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-3">
+            <p className="mb-1.5 text-xs font-black text-emerald-800">Vista previa del pedido</p>
+            <pre className="whitespace-pre-wrap break-words text-xs font-semibold text-emerald-900">
               {orderText}
             </pre>
           </div>
 
           {/* Action buttons */}
           <div className="flex flex-wrap gap-2">
+            {onMarkAsOrdered && (
+              <button
+                type="button"
+                onClick={handleMarkAsOrdered}
+                className="rounded-xl bg-emerald-600 px-3 py-2 text-xs font-black text-white hover:bg-emerald-700"
+              >
+                <CheckCircle className="mr-1 inline h-4 w-4" />
+                Marcar como pedido
+              </button>
+            )}
+
             <button
               type="button"
               onClick={handleCopy}
