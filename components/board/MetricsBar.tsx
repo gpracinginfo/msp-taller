@@ -102,7 +102,7 @@ function Metric({
       <button
         type="button"
         onClick={onClick}
-        className={`rounded-2xl border p-3 shadow-sm transition hover:opacity-80 active:scale-95 text-left w-full ring-1 ring-slate-200 ${current.card}`}
+        className={`rounded-2xl border p-3 shadow-sm transition hover:opacity-80 active:scale-95 text-left w-full ring-1 ring-[#d6e1ec] ${current.card}`}
       >
         {inner}
       </button>
@@ -110,7 +110,7 @@ function Metric({
   }
 
   return (
-    <div className={`rounded-2xl border p-3 shadow-sm ring-1 ring-slate-200 ${current.card}`}>
+    <div className={`rounded-2xl border p-3 shadow-sm ring-1 ring-[#d6e1ec] ${current.card}`}>
       {inner}
     </div>
   );

@@ -38,15 +38,15 @@ export const boards: BoardInfo[] = [
     id: 'mecanica',
     name: 'Mecánica',
     short: 'MEC',
-    className: 'bg-slate-700 text-slate-200 border-slate-600',
-    activeClass: 'bg-[#0ea5e9] text-white border-[#0ea5e9]'
+    className: 'bg-blue-50 text-blue-900 border-blue-200 hover:bg-blue-100',
+    activeClass: 'bg-[#2563eb] text-white border-[#2563eb]'
   },
   {
     id: 'chapa',
     name: 'Chapa-Pintura',
     short: 'CHAPA',
-    className: 'bg-slate-700 text-slate-200 border-slate-600',
-    activeClass: 'bg-[#06b6d4] text-white border-[#06b6d4]'
+    className: 'bg-sky-50 text-sky-900 border-sky-200 hover:bg-sky-100',
+    activeClass: 'bg-[#0891b2] text-white border-[#0891b2]'
   }
 ];
 

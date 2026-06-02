@@ -52,11 +52,11 @@ export function KanbanColumn({
         event.preventDefault();
         onDrop(column.id, event.dataTransfer.getData('jobId'));
       }}
-      className={`min-h-[420px] rounded-3xl border p-3 shadow-md transition ${
-        column.specialClass || 'border-slate-200 bg-slate-50'
+      className={`min-h-[420px] rounded-3xl border p-3 shadow-sm transition ${
+        column.specialClass || 'border-[#d6e1ec] bg-[#f8fafc]'
       } ${
         isDragOver
-          ? 'border-[#0ea5e9] bg-sky-50 ring-2 ring-sky-200'
+          ? 'border-[#2563eb] bg-blue-50 ring-2 ring-blue-200'
           : ''
       }`}
     >
@@ -65,7 +65,7 @@ export function KanbanColumn({
           {column.title}
         </h2>
 
-        <span className="rounded-full bg-slate-200 px-2 py-1 text-xs font-bold text-slate-700">
+        <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-bold text-blue-700">
           {jobs.length}
         </span>
       </div>

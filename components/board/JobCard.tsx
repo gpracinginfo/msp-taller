@@ -66,7 +66,7 @@ export function JobCard({
         isChapa
           ? `border-2 ${priorityInfo.borderClass} ${isDavid ? 'bg-fuchsia-50' : isFane ? 'bg-orange-50' : chapaStyles.bg}`
           : priorityInfo.cardClass
-      } ${isDragging ? 'opacity-60 ring-2 ring-[#0ea5e9]' : ''} ${isDavid ? 'ring-2 ring-fuchsia-500 shadow-fuchsia-200' : ''} ${isFane && !isDavid ? 'ring-2 ring-orange-400 shadow-orange-200' : ''}`}
+      } ${isDragging ? 'opacity-60 ring-2 ring-[#2563eb]' : ''} ${isDavid ? 'ring-2 ring-fuchsia-500 shadow-fuchsia-200' : ''} ${isFane && !isDavid ? 'ring-2 ring-orange-400 shadow-orange-200' : ''}`}
     >
       <div className={`h-2 w-full ${isDavid ? 'bg-fuchsia-500' : isFane ? 'bg-orange-400' : isChapa ? chapaStyles.bar : priorityInfo.barClass}`} />
 
@@ -183,7 +183,7 @@ export function JobCard({
         <div className="mt-2 flex gap-1" onClick={(event) => event.stopPropagation()}>
           <button
             type="button"
-            className="rounded-lg border border-slate-200 bg-white p-1.5 text-xs font-bold hover:bg-sky-50 hover:border-sky-300"
+            className="rounded-lg border border-[#d6e1ec] bg-white p-1.5 text-xs font-bold hover:border-[#2563eb] hover:bg-blue-50"
             onClick={() => onMove(job, -1)}
             title="Mover al estado anterior"
           >
@@ -192,7 +192,7 @@ export function JobCard({
 
           <button
             type="button"
-            className="rounded-lg border border-slate-200 bg-white p-1.5 text-xs font-bold hover:bg-sky-50 hover:border-sky-300"
+            className="rounded-lg border border-[#d6e1ec] bg-white p-1.5 text-xs font-bold hover:border-[#2563eb] hover:bg-blue-50"
             onClick={() => onMove(job, 1)}
             title="Mover al estado siguiente"
           >

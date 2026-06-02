@@ -803,7 +803,7 @@ export function BoardApp({ userEmail, userRole = 'admin' }: { userEmail?: string
   }, [finishDragSoon, moveJobToStatus]);
 
   return (
-    <div className="min-h-screen bg-transparent px-3 py-3 text-slate-100 lg:px-5 lg:py-4">
+    <div className="min-h-screen bg-[#f3f7fb] px-3 py-3 text-slate-900 lg:px-5 lg:py-4">
       <BoardHeader
         userEmail={userEmail}
         activeBoard={activeBoard}

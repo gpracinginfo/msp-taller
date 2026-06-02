@@ -53,10 +53,10 @@ export function BoardHeader({
   onLogout: () => void;
 }) {
   return (
-    <header className="mb-3 rounded-3xl border border-slate-700/60 bg-[#0b1220] p-4 shadow-lg">
+    <header className="mb-3 rounded-3xl bg-gradient-to-r from-[#0b2545] to-[#123b66] p-4 shadow-lg">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <p className="text-sm font-semibold text-[#0ea5e9]">
+          <p className="text-sm font-semibold text-[#38bdf8]">
             PANEL MSP
           </p>
 
@@ -68,7 +68,7 @@ export function BoardHeader({
             <SaveIndicator state={saveState} />
           </div>
 
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-blue-200">
             Usuario: {userEmail}
           </p>
         </div>
@@ -77,7 +77,7 @@ export function BoardHeader({
           <button
             type="button"
             onClick={onOpenDailySummary}
-            className="rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-600"
+            className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-bold text-white hover:bg-white/20"
           >
             <ClipboardList className="mr-2 inline h-4 w-4" />
             Resumen diario
@@ -86,7 +86,7 @@ export function BoardHeader({
           <button
             type="button"
             onClick={onOpenDeliveredHistory}
-            className="rounded-2xl border border-slate-600 bg-slate-800 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-700"
+            className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-bold text-white hover:bg-white/20"
           >
             <History className="mr-2 inline h-4 w-4" />
             Historial
@@ -98,7 +98,7 @@ export function BoardHeader({
                 href="https://calendar.google.com/calendar/u/0/r"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-600"
+                className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-bold text-white hover:bg-white/20"
               >
                 <ExternalLink className="mr-2 inline h-4 w-4" />
                 Ver Calendar
@@ -109,7 +109,7 @@ export function BoardHeader({
               <button
                 type="button"
                 onClick={onAddJob}
-                className="rounded-2xl bg-[#0ea5e9] px-4 py-3 text-sm font-bold text-white hover:bg-[#0284c7]"
+                className="rounded-2xl bg-[#2563eb] px-4 py-3 text-sm font-bold text-white hover:bg-[#1d4ed8]"
               >
                 <Plus className="mr-2 inline h-4 w-4" />
                 Nuevo coche
@@ -120,7 +120,7 @@ export function BoardHeader({
           <button
             type="button"
             onClick={onLogout}
-            className="rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-600"
+            className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-bold text-white hover:bg-white/20"
           >
             <LogOut className="mr-2 inline h-4 w-4" />
             Salir
@@ -132,10 +132,10 @@ export function BoardHeader({
         <BoardTabs activeBoard={activeBoard} onChange={onBoardChange} />
 
         <div className="relative w-full lg:w-[420px]">
-          <Search className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-3.5 h-4 w-4 text-blue-200" />
 
           <input
-            className="w-full rounded-2xl border border-slate-600 bg-slate-800 py-3 pl-10 pr-3 text-sm text-slate-100 placeholder:text-slate-400 outline-none focus:border-[#0ea5e9]"
+            className="w-full rounded-2xl border border-white/20 bg-white/10 py-3 pl-10 pr-3 text-sm text-white placeholder:text-blue-200 outline-none focus:border-[#38bdf8] focus:bg-white/15"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Buscar matrícula, cliente, prioridad, pieza..."
@@ -166,7 +166,7 @@ function SettingsMenu({ onOpenMechanics, onOpenSuppliers, onSyncGoogleCalendar }
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-600"
+        className="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm font-bold text-white hover:bg-white/20"
       >
         <Settings className="mr-2 inline h-4 w-4" />
         Configuración
