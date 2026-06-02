@@ -53,11 +53,11 @@ export function BoardHeader({
   onLogout: () => void;
 }) {
   return (
-    <header className="mb-3 rounded-3xl bg-white p-4 shadow-sm">
+    <header className="mb-3 rounded-3xl border border-[#d8e5df] bg-white p-4 shadow-sm">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <p className="text-sm font-semibold text-blue-700">
-            PANEL GP RACING
+          <p className="text-sm font-semibold text-[#256d5a]">
+            PANEL MSP
           </p>
 
           <div className="flex flex-wrap items-end gap-3">
@@ -86,7 +86,7 @@ export function BoardHeader({
           <button
             type="button"
             onClick={onOpenDeliveredHistory}
-            className="rounded-2xl border bg-slate-900 px-4 py-3 text-sm font-bold text-white hover:bg-slate-800"
+            className="rounded-2xl border bg-[#17483c] px-4 py-3 text-sm font-bold text-white hover:bg-[#0f2e26]"
           >
             <History className="mr-2 inline h-4 w-4" />
             Historial
@@ -109,7 +109,7 @@ export function BoardHeader({
               <button
                 type="button"
                 onClick={onAddJob}
-                className="rounded-2xl bg-blue-700 px-4 py-3 text-sm font-bold text-white hover:bg-blue-800"
+                className="rounded-2xl bg-[#256d5a] px-4 py-3 text-sm font-bold text-white hover:bg-[#17483c]"
               >
                 <Plus className="mr-2 inline h-4 w-4" />
                 Nuevo coche
@@ -135,7 +135,7 @@ export function BoardHeader({
           <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
 
           <input
-            className="w-full rounded-2xl border bg-white py-3 pl-10 pr-3 text-sm outline-none focus:border-blue-600"
+            className="w-full rounded-2xl border border-[#d8e5df] bg-white py-3 pl-10 pr-3 text-sm outline-none focus:border-[#256d5a]"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Buscar matrícula, cliente, prioridad, pieza..."
