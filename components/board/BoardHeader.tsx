@@ -53,22 +53,22 @@ export function BoardHeader({
   onLogout: () => void;
 }) {
   return (
-    <header className="mb-3 rounded-3xl border border-[#d8e5df] bg-white p-4 shadow-sm">
+    <header className="mb-3 rounded-3xl border border-slate-700/60 bg-[#0b1220] p-4 shadow-lg">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div>
-          <p className="text-sm font-semibold text-[#256d5a]">
+          <p className="text-sm font-semibold text-[#0ea5e9]">
             PANEL MSP
           </p>
 
           <div className="flex flex-wrap items-end gap-3">
-            <h1 className="text-3xl font-black tracking-tight">
+            <h1 className="text-3xl font-black tracking-tight text-white">
               CONTROL MSP
             </h1>
 
             <SaveIndicator state={saveState} />
           </div>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-slate-400">
             Usuario: {userEmail}
           </p>
         </div>
@@ -77,7 +77,7 @@ export function BoardHeader({
           <button
             type="button"
             onClick={onOpenDailySummary}
-            className="rounded-2xl border bg-white px-4 py-3 text-sm font-bold hover:bg-gray-50"
+            className="rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-600"
           >
             <ClipboardList className="mr-2 inline h-4 w-4" />
             Resumen diario
@@ -86,7 +86,7 @@ export function BoardHeader({
           <button
             type="button"
             onClick={onOpenDeliveredHistory}
-            className="rounded-2xl border bg-[#17483c] px-4 py-3 text-sm font-bold text-white hover:bg-[#0f2e26]"
+            className="rounded-2xl border border-slate-600 bg-slate-800 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-700"
           >
             <History className="mr-2 inline h-4 w-4" />
             Historial
@@ -98,7 +98,7 @@ export function BoardHeader({
                 href="https://calendar.google.com/calendar/u/0/r"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-2xl border bg-white px-4 py-3 text-sm font-bold hover:bg-gray-50"
+                className="rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-600"
               >
                 <ExternalLink className="mr-2 inline h-4 w-4" />
                 Ver Calendar
@@ -109,7 +109,7 @@ export function BoardHeader({
               <button
                 type="button"
                 onClick={onAddJob}
-                className="rounded-2xl bg-[#256d5a] px-4 py-3 text-sm font-bold text-white hover:bg-[#17483c]"
+                className="rounded-2xl bg-[#0ea5e9] px-4 py-3 text-sm font-bold text-white hover:bg-[#0284c7]"
               >
                 <Plus className="mr-2 inline h-4 w-4" />
                 Nuevo coche
@@ -120,7 +120,7 @@ export function BoardHeader({
           <button
             type="button"
             onClick={onLogout}
-            className="rounded-2xl border bg-white px-4 py-3 text-sm font-bold hover:bg-gray-50"
+            className="rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-600"
           >
             <LogOut className="mr-2 inline h-4 w-4" />
             Salir
@@ -132,10 +132,10 @@ export function BoardHeader({
         <BoardTabs activeBoard={activeBoard} onChange={onBoardChange} />
 
         <div className="relative w-full lg:w-[420px]">
-          <Search className="absolute left-3 top-3.5 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
 
           <input
-            className="w-full rounded-2xl border border-[#d8e5df] bg-white py-3 pl-10 pr-3 text-sm outline-none focus:border-[#256d5a]"
+            className="w-full rounded-2xl border border-slate-600 bg-slate-800 py-3 pl-10 pr-3 text-sm text-slate-100 placeholder:text-slate-400 outline-none focus:border-[#0ea5e9]"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="Buscar matrícula, cliente, prioridad, pieza..."
@@ -166,7 +166,7 @@ function SettingsMenu({ onOpenMechanics, onOpenSuppliers, onSyncGoogleCalendar }
       <button
         type="button"
         onClick={() => setOpen((prev) => !prev)}
-        className="rounded-2xl border bg-white px-4 py-3 text-sm font-bold hover:bg-gray-50"
+        className="rounded-2xl border border-slate-600 bg-slate-700 px-4 py-3 text-sm font-bold text-slate-100 hover:bg-slate-600"
       >
         <Settings className="mr-2 inline h-4 w-4" />
         Configuración
