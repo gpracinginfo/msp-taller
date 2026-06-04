@@ -46,7 +46,7 @@ const DEFAULT_APPOINTMENT_MINUTES = 90;
 
 const WORK_PRESET_ROWS = [
   ['PRESUPUESTO', 'DIAGNÓSTICO'],
-  ['REVISIÓN COMPLETA'],
+  ['REV COMPLETA'],
   ['PASTILLAS DELANTERAS', 'PASTILLAS TRASERAS'],
   ['NEU DEL IZQ', 'NEU DEL DCH'],
   ['NEU TRAS IZQ', 'NEU TRAS DCH']
@@ -582,7 +582,7 @@ export function JobModal({
             </div>
 
             {/* Fila 2: Acciones rápidas | Chat | FANE/DAVID */}
-            <div className={`mt-3 grid gap-3 ${isConsulta ? '' : 'lg:grid-cols-[280px_minmax(0,1fr)_140px]'}`}>
+            <div className={`mt-3 grid gap-3 ${isConsulta ? '' : 'lg:grid-cols-[380px_minmax(0,1fr)_140px]'}`}>
               {!isConsulta && (
                 <div>
                   <p className="mb-1.5 text-xs font-black text-gray-600">Acciones rápidas</p>
