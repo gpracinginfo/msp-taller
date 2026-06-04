@@ -45,12 +45,30 @@ type JobDraft = {
 const DEFAULT_APPOINTMENT_MINUTES = 90;
 
 const WORK_PRESET_ROWS = [
-  ['Presupuesto', 'Diagnóstico'],
-  ['Revisión completa'],
-  ['Pastillas delanteras', 'Pastillas traseras'],
-  ['Neu Del IZQ', 'Neu Del DCH'],
-  ['Neu Tras IZQ', 'Neu Tras DCH']
+  ['PRESUPUESTO', 'DIAGNÓSTICO'],
+  ['REVISIÓN COMPLETA'],
+  ['PASTILLAS DELANTERAS', 'PASTILLAS TRASERAS'],
+  ['NEU DEL IZQ', 'NEU DEL DCH'],
+  ['NEU TRAS IZQ', 'NEU TRAS DCH']
 ];
+
+function formatInvoiceNumber(value: string): string {
+  const clean = value.trim().toUpperCase();
+  if (!clean) return '';
+
+  const currentYear = new Date().getFullYear().toString().slice(-2);
+  const prefix = `M${currentYear}-`;
+
+  if (/^M\d{2}-\d+$/.test(clean)) {
+    const [rawPrefix, rawNumber] = clean.split('-');
+    return `${rawPrefix}-${rawNumber.padStart(4, '0')}`;
+  }
+
+  const onlyNumbers = clean.replace(/\D/g, '');
+  if (!onlyNumbers) return clean;
+
+  return `${prefix}${onlyNumbers.padStart(4, '0')}`;
+}
 
 function addMinutesToLocalInput(value: string, minutes: number) {
   if (!value) return '';
@@ -221,6 +239,12 @@ export function JobModal({
     if (updated) setDraft(createDraft(updated));
   }
 
+  function handleInvoiceBlur() {
+    if (isConsulta) return;
+    const formatted = formatInvoiceNumber(draft.invoice_number);
+    if (formatted !== draft.invoice_number) updateDraft('invoice_number', formatted);
+  }
+
   async function handleSave() {
     if (isConsulta) return;
     let appointmentEnd = draft.appointment_end;
@@ -253,7 +277,7 @@ export function JobModal({
       entry_date: draft.entry_date || null,
       key_number: draft.key_number,
       chapa_type: draft.chapa_type,
-      invoice_number: draft.invoice_number || null,
+      invoice_number: draft.invoice_number ? formatInvoiceNumber(draft.invoice_number) : null,
       kilometers: draft.kilometers || null
     };
 
@@ -418,6 +442,7 @@ export function JobModal({
                 label="Nº factura"
                 value={draft.invoice_number}
                 placeholder="Nº factura"
+                onBlur={handleInvoiceBlur}
                 onChange={(value) => updateDraft('invoice_number', value)}
                 readOnly={isConsulta}
               />
